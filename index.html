@@ -145,6 +145,7 @@ label.slider{display:grid;grid-template-columns:1fr auto;gap:4px 8px;margin-top:
 <h2 id="practice-title">Prácticas guiadas</h2>
 <div class="controls"><select id="lesson" aria-label="Elegir práctica">
 <option value="cycle">01 · Marcha, carga y descarga</option><option value="pressure">02 · Ajuste de bandas de presión</option><option value="alarm">03 · Aviso y parada por temperatura</option><option value="service">04 · Temporizador de servicio</option><option value="remote">05 · Control remoto DI04</option><option value="power">06 · Rearranque tras corte (ARAVF)</option>
+<option value="starts">07 · Frecuencia de arranques (nHCA)</option>
 </select><button class="action" id="resetLab">Reiniciar práctica</button></div>
 <ol class="section" id="steps"></ol>
 </section>
@@ -162,7 +163,14 @@ const lessons = {
   alarm: ['Arranca el compresor y sube la temperatura a 110 °C. Observa el aviso y el LED rojo fijo.', 'Pulsa «Alta temperatura» y observa la parada y el parpadeo del LED rojo.', 'Baja a 100 °C. Mantén ↵ durante 5 segundos y observa RST durante 2 segundos. Prueba también la sobrepresión, la sobrecarga y la parada de emergencia.'],
   service: ['Pulsa «Simular servicio vencido». En dAtA → d.6 pulsa ↵ para ver las horas restantes.', 'Mantén ↵ cinco segundos en d.6. Introduce 9989, pulsa ↵, elige rES.y y confirma. Se inicia un nuevo intervalo de servicio.', 'También puedes ir a ProG → PASS (9989) → tiMr → SrV.d. Confirma un intervalo positivo para reiniciar el aviso y el contador.'],
   remote: ['Con el compresor parado, entra en ProG → PASS e introduce 9888. En CtrL → Lo.rE elige YES.', 'Cierra DI04 en el banco y mantén pulsado ⏽ para habilitar el mando remoto.', 'Abre y cierra DI04 para comprobar el paro y el arranque. Un paro con ⏽ deshabilita el mando remoto.'],
-  power: ['Con el compresor parado, entra en ProG → PASS e introduce 9888. En CtrL activa Ar.AF y revisa Ar.d.', 'Al volver a la pantalla principal, comprueba que aparece el triángulo. Arranca, corta la tensión y restablécela para ver la cuenta atrás.', 'Repite el corte y pulsa ⏽ durante la cuenta atrás para cancelarla.']
+  power: ['Con el compresor parado, entra en ProG → PASS e introduce 9888. En CtrL activa Ar.AF y revisa Ar.d.', 'Al volver a la pantalla principal, comprueba que aparece el triángulo. Arranca, corta la tensión y restablécela para ver la cuenta atrás.', 'Repite el corte y pulsa ⏽ durante la cuenta atrás para cancelarla.'],
+  starts: [
+    'nHCA ajusta el límite de arranques por hora. Reinicia la práctica y, con el compresor parado, entra en ProG → PASS (9888) → CtrL → nHCA. Usa las flechas para ajustar el valor y confirma con ↵.',
+    'Prueba con nHCA = 0. Vuelve a la pantalla principal con un toque de la tecla de marcha, pon el consumo al 0 % y mantén pulsada esa tecla para arrancar. Al llegar a la presión de descarga, el motor sigue girando en descarga. Así puede quedar en marcha casi continua mientras el compresor esté habilitado.',
+    'Sube el consumo al 60 % hasta que baje la presión. El compresor vuelve a cargar con el motor ya en marcha. Comprueba en dAtA → d.2 que ese paso a carga no suma un arranque.',
+    'Pulsa «Reiniciar práctica», ajusta nHCA = 25 y repite con consumo al 0 %. Tras unos segundos en descarga, el motor se para y queda «En espera». Con la presión estable y sin consumo, permanece parado.',
+    'Vuelve a subir el consumo al 60 %. Cuando la presión llegue a la consigna de carga, el motor arranca y d.2 suma un arranque. Con 25 se reduce el tiempo que el motor gira sin producir aire, y los arranques automáticos dependen de la demanda, hasta el límite horario.'
+  ]
 };
 const defaults = () => ({
   powered:true, locked:false, command:false, remoteArmed:false, di:false, countdown:0, resume:false,
