@@ -223,7 +223,7 @@ const rows = {
   ],
   disp: () => [['tEMP','Unidad de temperatura','tUnit',0,1,1],['PrES','Unidad de presión','pUnit',0,2,1],['bC.LG','Tiempo de retroiluminación','light',0,120,5]],
   timer: () => [['SrV.d','Intervalo y restablecimiento del aviso de servicio','service',0,9999,1]],
-  control: () => [['Lo.rE','Arranque y paro local/remoto','remote',0,1,1],['Ar.AF','Rearranque tras corte','arav',0,1,1],['Ar.d','Retardo al rearranque','delay',0,120,1],['nHCA','Límite de arranques por hora','hourlyLimit',0,10,1]]
+  control: () => [['Lo.rE','Arranque y paro local/remoto','remote',0,1,1],['Ar.AF','Rearranque tras corte','arav',0,1,1],['Ar.d','Retardo al rearranque','delay',0,120,1],['nHCA','Límite de arranques por hora','hourlyLimit',0,25,1]]
 };
 const adjustable = ['reg','disp','timer','control'];
 const current = () => rows[s.screen]?.()[s.cursor];
