@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador Elektronikon Base · BOTTY</title>
+<style>
+:root{color-scheme:dark;--bg:#0b61c2;--card:#064988;--line:#2c4151;--text:#f0f6fa;--muted:#acbdca;--accent:#69e0cf}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#172d3c,var(--bg) 65%);color:var(--text);font:16px/1.5 system-ui,sans-serif}
+main{max-width:1050px;margin:auto;padding:28px 18px 36px}h1,h2,p{margin:0}h1{font-size:clamp(27px,5vw,42px);line-height:1.1}h2{font-size:19px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:800;margin-bottom:8px}.sub{color:var(--muted);margin-top:8px}.layout{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:24px;margin-top:22px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:17px}.station{text-align:center}.stack{display:grid;gap:12px;align-content:start}
+.panel{position:relative;margin:12px auto 10px;width:min(100%,276px);aspect-ratio:276/562;isolation:isolate}
+.panel svg{display:block;width:100%;height:100%}
+.lcd{--lcd-glass:#c1bde8;position:absolute;left:14.1%;top:22.9%;width:74.6%;height:25.4%;color:#392795;background:radial-gradient(ellipse at 38% 46%,#c9c5ee,var(--lcd-glass) 73%,#b2acd9);border-radius:2px;box-shadow:inset 0 0 3px 1px #34304780;overflow:hidden}
+.lcd.off{background:#757d77}.lcd.off svg{visibility:hidden}.lcd.dim{--lcd-glass:#a5bdb7;background:var(--lcd-glass);color:#29434b}
+.lcd .mark,.lcd .segment{opacity:0}.lcd .lit{opacity:1}
+.lcd .rotating{transform-origin:61px 26px;animation:lcd-rotation 1s steps(12) infinite}
+@keyframes lcd-rotation{to{transform:rotate(360deg)}}
+.lcd .unit{font:600 9px Arial,sans-serif;fill:currentColor}
+.lcd .digit-bank{filter:drop-shadow(.25px .35px .35px #51408a55)}
+.lcd .counter-id{font:700 14px Consolas,monospace;fill:currentColor}
+.readout{min-height:2.5em;margin:0 auto 8px;font-size:13px;color:var(--muted);line-height:1.25}.readout b{color:var(--text)}.readout [hidden]{display:none}
+.blink{animation:blink 1s step-end infinite}@keyframes blink{50%{opacity:.2}}
+.key{position:absolute;top:56.4%;height:8.5%;width:17%;border:0;background:transparent;color:#18232a;font-size:26px;font-weight:800;display:grid;place-items:center;cursor:pointer;touch-action:none;user-select:none;border-radius:5px;padding:0}.key:hover{background:#e4fbfa60}.key:active,.key.hold{background:#4ea7a875}.key:focus-visible{outline:3px solid #007267;outline-offset:2px}.run{left:12%}.up{left:33%}.down{left:53.5%}.enter{left:74%}
+.key{-webkit-touch-callout:none;-webkit-user-select:none}
+.led{position:absolute;top:53.5%;width:6px;height:6px;border-radius:50%;background:#45515a}.power{left:28%}.alarm{left:51%}.service{left:73%}.power.on{background:#27db74;box-shadow:0 0 6px 2px #26c268}.alarm.on{background:#ff444d;box-shadow:0 0 6px 2px #ff3a47}.service.on{background:#ffce37;box-shadow:0 0 6px 2px #f5be32}
+.help{font-size:13px;color:var(--muted);max-width:310px;margin:auto}.tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.tag{border:1px solid var(--line);border-radius:10px;padding:8px}.tag span{display:block;color:var(--muted);font-size:12px}.tag b{display:block;font-size:15px;line-height:1.25;min-height:1.3em}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}button,select{font:inherit}button.action,select{background:#203648;border:1px solid #496274;border-radius:8px;color:var(--text);padding:7px 10px;cursor:pointer;font-size:13px}button.action:hover,select:hover{background:#2c4b5f}button.action:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.slider{display:grid;grid-template-columns:1fr auto;gap:4px 8px;margin-top:12px;font-size:14px}input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:0}output{color:var(--accent);font-variant-numeric:tabular-nums}.section{font-size:13px;color:var(--muted);margin-top:8px}.notice{color:var(--accent);min-height:2.7em;margin-top:10px;font-size:13px}summary{cursor:pointer;font-weight:650}ol,ul{padding-left:20px;margin:8px 0 0}.log{max-height:110px;overflow:auto;font-size:12px;color:var(--muted)}footer{margin-top:16px;font-size:12px;color:var(--muted)}
+@media(max-width:730px){.layout{grid-template-columns:1fr;gap:12px}.station{max-width:none}.panel{width:min(76vw,276px)}}
+@media(prefers-reduced-motion:reduce){.blink,.lcd .rotating{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<header><p class="eyebrow">BOTTY · Banco de formación</p><h1>Simulador Elektronikon Base</h1><p class="sub">Practica con el frontal de cuatro teclas y observa cómo responde un compresor de tornillo de velocidad fija.</p></header>
+<div class="layout">
+<section class="card station" aria-labelledby="panel-title">
+<h2 id="panel-title">Frontal del controlador</h2>
+<div class="panel">
+<svg viewBox="0 0 276 562" aria-hidden="true">
+<defs><linearGradient id="face" x2=".8" y2="1"><stop stop-color="#7d838e"/><stop offset=".7" stop-color="#666e79"/><stop offset="1" stop-color="#505963"/></linearGradient><linearGradient id="keyfill" x2="0" y2="1"><stop stop-color="#fffdf1"/><stop offset="1" stop-color="#d7d3c2"/></linearGradient><linearGradient id="nameplate" x2=".8" y2="1"><stop stop-color="#eeebd9"/><stop offset="1" stop-color="#c9c8b7"/></linearGradient></defs>
+<path d="M13 2 264 7 273 15 273 550 264 558 12 560 5 554 5 10Z" fill="url(#face)" stroke="#303839" stroke-width="5"/>
+<path d="M9 424H270V548L261 554H14L9 550Z" fill="url(#nameplate)"/>
+<path d="M9 424H270" stroke="#262d32" stroke-width="3"/>
+<path d="M12 9V552M12 8l249 5" fill="none" stroke="#dbe2e6" stroke-opacity=".8" stroke-width="2"/>
+<rect x="37" y="126" width="210" height="149" rx="4" fill="#343d3c" stroke="#76818a" stroke-width="2"/>
+<g fill="#283438"><path d="m81 276 8 3-7 7h6l-16 13 5-10h-4z"/><path d="m142 276 12 22h-24zm-1 7v8h2v-8zm0 10v2h2v-2z" fill-rule="evenodd"/><path d="M196 277a7 7 0 0 0 7 10l9 11 3-3-11-10a7 7 0 0 0-7-8l4 4-2 2-4-4z"/></g>
+<g fill="url(#keyfill)" stroke="#424c53" stroke-width="2"><rect x="35" y="320" width="43" height="42" rx="3"/><rect x="92" y="320" width="43" height="42" rx="3"/><rect x="149" y="320" width="43" height="42" rx="3"/><rect x="205" y="320" width="43" height="42" rx="3"/></g>
+<!-- Botty, lettering trazado para conservar el aspecto sin fuentes externas. -->
+<g transform="translate(69 459) scale(1.05)" fill="#080d12">
+  <path fill-rule="evenodd" d="M0 33c5 1 7-2 10-8l9-19c-6 0-10 4-10 8l-4-1C6 6 13 1 24 1h7c9 0 14 3 12 9-1 4-5 7-11 8 6 1 8 4 6 9-3 7-12 10-23 10H0zm17 0c6 0 10-3 12-8 1-4 0-6-4-6h-3l-4 9c-1 2-2 4-3 5zm7-17h3c4 0 7-2 9-6 1-4-1-6-5-6h-1z"/>
+  <path fill-rule="evenodd" d="M60 14c6 0 9 4 7 10-2 8-10 14-18 14-7 0-10-4-8-10 2-8 10-14 19-14zm-1 3c-3 0-6 3-8 8-3 7-3 10 0 10s6-4 9-10c2-5 2-8-1-8z"/>
+  <path id="botty-t" d="M69 17l1-3h6l4-8 8-1-5 9h8l-2 3h-7l-6 12c-2 4-1 5 1 5 2 0 4-2 6-4l2 1c-4 5-8 7-13 7-5 0-7-3-4-9l6-12z"/>
+  <use href="#botty-t" transform="translate(17 0)"/>
+  <path d="M105 16c3-2 6-3 9-2 3 1 2 4 0 8l-4 8c-1 2-1 4 1 4 2 0 5-3 7-6l7-14h8l-12 23c-5 9-12 14-21 14-5 0-8-2-7-5 1-2 4-3 6-2-1 3 0 4 2 4 4 0 8-4 12-12l1-2c-3 3-6 4-9 4-5 0-6-4-3-9l5-10c1-2 0-2-2-1z"/>
+</g>
+</svg>
+<div class="lcd" id="lcd" role="img" aria-label="Pantalla del controlador">
+<svg viewBox="0 0 226 151" aria-hidden="true">
+<g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+  <g class="mark" id="mark-flow" transform="translate(29 26)">
+    <path d="M-9-4v-2a3 3 0 0 1 3-3H6a3 3 0 0 1 3 3V6a3 3 0 0 1-3 3H-6a3 3 0 0 1-3-3V4M0-22v7M0 22v-7"/>
+    <path d="m-3.6-15 3.6 4 3.6-4zm0 30 3.6-4 3.6 4z" fill="currentColor" stroke="none"/>
+    <g class="mark" id="mark-flow-in">
+      <path d="M-15 0h9"/><path d="m-6-3.6 4 3.6-4 3.6z" fill="currentColor" stroke="none"/>
+    </g>
+    <g class="mark" id="mark-flow-out">
+      <path d="M-19-3h5v-7m-5 13h5v7"/><path d="m-17.6-10 3.6-4 3.6 4zm0 20 3.6 4 3.6-4z" fill="currentColor" stroke="none"/>
+    </g>
+  </g>
+  <circle class="mark" id="mark-run" cx="61" cy="26" r="11" pathLength="60" stroke-dasharray="8.4 1.6" stroke-linecap="butt"/>
+  <g class="mark" id="mark-clock"><circle cx="102" cy="26" r="12"/><path d="M102 18v9h7"/></g>
+  <g class="mark" id="mark-pressure"><circle cx="168" cy="26" r="12"/><path d="m159 35 6-20m5 0 6 20"/></g>
+  <g class="mark" id="mark-heat"><path d="M201.5 31V16a2 2 0 0 1 4 0v15a4 4 0 1 1-4 0Z" stroke-width="1"/><path d="M203.5 24v9" stroke-width="3.5"/><circle cx="203.5" cy="35" r="3.3" fill="currentColor" stroke="none"/></g>
+  <g class="mark" id="mark-alert"><path d="m7 90 13-22 13 22z"/><path d="m19.5 74-1 6 3-1-2.7 6h1.5l-1 3 3.7-5h-1.6l2.1-6-3 1 1-4z" fill="currentColor" stroke="none"/><circle cx="31" cy="71" r="4" fill="currentColor" stroke="none"/><path d="M31 69v4" stroke="var(--lcd-glass)" stroke-width="1.6" stroke-linecap="butt"/></g>
+  <g class="mark" id="mark-remote"><rect x="17" y="120" width="22" height="23" rx="2.5"/><path d="m22 138 11-11"/><path d="M28 125h7v7z" fill="currentColor" stroke="none"/></g>
+  <g class="mark" id="mark-service"><path d="M66 121a6 6 0 0 0 7 9l12 13 3-3-12-13a6 6 0 0 0-7-7l4 4-3 2-4-4z" fill="currentColor" stroke-width="1"/></g>
+  <g class="mark" id="mark-emergency"><circle cx="113" cy="131.5" r="12" fill="currentColor" stroke="none"/><path d="m104 126 9 16 9-16z" fill="var(--lcd-glass)" stroke="none"/><path d="M113 128v7m0 1.5v2" stroke-width="1.8" stroke-linecap="butt"/></g>
+  <g class="mark" id="mark-motor"><rect x="146" y="120" width="23" height="23" rx="3"/><path d="M152 121v21m12-21v21"/><path d="M141 129h5v5h-5zm28 0h3v5h-3z" fill="currentColor" stroke="none"/></g>
+  <g class="mark" id="mark-inhibit"><circle cx="199" cy="131.5" r="6"/><path d="M210 135a11.5 11.5 0 1 0-4 5m-18-20 23 23m0-23-23 23"/><path d="m207 134 4 4 3-4z" fill="currentColor" stroke="none"/></g>
+</g>
+<g class="unit" id="lcdUnits">
+  <text class="mark" id="mark-thousands" x="115" y="25">×1000</text><text class="mark" id="mark-hours" x="121" y="34">hrs</text>
+  <text class="mark" id="mark-mpa" x="195" y="61">MPa</text><text class="mark" id="mark-c" x="211" y="73">°C</text>
+  <text class="mark" id="mark-psi" x="196" y="80">psi</text><text class="mark" id="mark-f" x="211" y="90">°F</text>
+  <text class="mark" id="mark-bar" x="196" y="100">bar</text>
+</g>
+<text class="counter-id" id="lcdCounter" x="6" y="61"></text>
+<g class="digit-bank" id="lcdDigits" fill="currentColor"></g>
+</svg>
+</div>
+<i class="led power" id="power" aria-hidden="true"></i><i class="led alarm" id="alarm" aria-hidden="true"></i><i class="led service" id="service" aria-hidden="true"></i>
+<button class="key run" id="run" aria-label="Marcha y paro, un toque para salir de cualquier menú">⏽</button>
+<button class="key up" id="up" aria-label="Subir">▲</button>
+<button class="key down" id="down" aria-label="Bajar">▼</button>
+<button class="key enter" id="enter" aria-label="Enter, mantener para volver">↵</button>
+</div>
+<p class="readout"><b id="lcdTop"></b> <span id="lcdValue"></span> <span id="lcdUnit"></span><br><span id="lcdBottom"></span></p>
+<p class="help">Desde cualquier menú, toca ⏽ una vez para volver a la pantalla principal de presión. En esa pantalla, mantén ⏽ para arrancar o toca una vez para parar. ▲ y ▼ recorren menús. ↵ entra y confirma. En d.6, mantén ↵ cinco segundos para iniciar el rearme.</p>
+</section>
+<div class="stack">
+<section class="card" aria-labelledby="bench-title">
+<h2 id="bench-title">Banco de pruebas</h2>
+<div class="tags"><div class="tag"><span>Compresor</span><b id="machine"></b></div><div class="tag"><span>Presión de red</span><b id="pressure"></b></div><div class="tag"><span>Temperatura</span><b id="temperature"></b></div></div>
+<label class="slider" for="demand">Consumo de aire <output id="demandValue" for="demand">35 %</output><input type="range" id="demand" min="0" max="100" value="35"></label>
+<label class="slider" for="heat">Temperatura manual del elemento <output id="heatValue" for="heat">78 °C</output><input type="range" id="heat" min="20" max="130" value="78"></label>
+<label class="slider" for="pressureDial">Presión de red <output id="pressureDialValue" for="pressureDial">6.4 bar · automática</output><input type="range" id="pressureDial" min="0" max="14" step="0.1" value="6.4"></label>
+<div class="controls"><button class="action" id="pressureAuto">Restaurar presión automática</button></div>
+<p class="section">Mueve el mando de presión para fijar la lectura. El consumo de aire vuelve a modificarla al restaurar el modo automático.</p>
+<h3>Simulación de averías</h3>
+<div class="controls">
+<button class="action" id="highTemp">Alta temperatura</button>
+<button class="action" id="highPressure">Sobrepresión</button>
+<button class="action" id="overload" aria-pressed="false">Provocar sobrecarga del motor</button>
+<button class="action" id="emergency" aria-pressed="false">Pulsar parada de emergencia</button>
+</div>
+<p class="section">Elimina la causa y mantén Intro (↵) durante 5 segundos. Aparece RST durante 2 segundos. En el simulador, el nivel de parada de presión es la consigna superior de la banda activa. El fallo aparece al superarla en más de 1,5 bar.</p>
+<div class="controls">
+<button class="action" id="powerSwitch">Cortar tensión</button>
+<button class="action" id="remoteSwitch">Cerrar DI04</button>
+<button class="action" id="serviceDue">Simular servicio vencido</button>
+<button class="action" id="keyboardLock">Bloquear teclado</button>
+<button class="action" id="back">Volver (Esc)</button>
+</div>
+<p class="notice" id="notice" role="status">Los controles necesitan JavaScript. En iPhone, abre el simulador desde una dirección web en Safari.</p>
+</section>
+<section class="card" aria-labelledby="practice-title">
+<h2 id="practice-title">Prácticas guiadas</h2>
+<div class="controls"><select id="lesson" aria-label="Elegir práctica">
+<option value="cycle">01 · Marcha, carga y descarga</option><option value="pressure">02 · Ajuste de bandas de presión</option><option value="alarm">03 · Aviso y parada por temperatura</option><option value="service">04 · Temporizador de servicio</option><option value="remote">05 · Control remoto DI04</option><option value="power">06 · Rearranque tras corte (ARAVF)</option>
+</select><button class="action" id="resetLab">Reiniciar práctica</button></div>
+<ol class="section" id="steps"></ol>
+</section>
+<section class="card"><details><summary>Registro del simulador</summary><ul id="log" class="log"></ul></details></section>
+</div>
+</div>
+<footer>Reproducción didáctica basada en el frontal y el manual de formación aportados. Las lecturas, rampas y tiempos de regulación son de ejemplo. El registro y los mandos del banco son ayudas del simulador. Esta versión cubre la operación y los menús indicados en las prácticas.</footer>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const lessons = {
+  cycle: ['Mantén ⏽ hasta que el compresor arranque. Observa la subida de presión.', 'Reduce el consumo al 0 %. Observa la descarga y el paso a espera.', 'Sube el consumo al 60 %. Cuando la presión alcance la consigna de carga, el compresor volverá a arrancar. Pulsa ⏽ para detenerlo.'],
+  pressure: ['Entra en ProG → rEG.P. Abre Pr.SL con ↵, elige SEL.1 o SEL.2 con las flechas y confirma con ↵.', 'Recorre LPr.1, UPr.1, LPr.2 y UPr.2. LPr es la presión de carga y UPr es la presión de descarga.', 'Pulsa ↵ sobre el código para ver y editar la consigna. Ajusta con las flechas y confirma con ↵. Deja al menos 0,5 bar entre la presión de carga y la de descarga.'],
+  alarm: ['Arranca el compresor y sube la temperatura a 110 °C. Observa el aviso y el LED rojo fijo.', 'Pulsa «Alta temperatura» y observa la parada y el parpadeo del LED rojo.', 'Baja a 100 °C. Mantén ↵ durante 5 segundos y observa RST durante 2 segundos. Prueba también la sobrepresión, la sobrecarga y la parada de emergencia.'],
+  service: ['Pulsa «Simular servicio vencido». En dAtA → d.6 pulsa ↵ para ver las horas restantes.', 'Mantén ↵ cinco segundos en d.6. Introduce 9989, pulsa ↵, elige rES.y y confirma. Se inicia un nuevo intervalo de servicio.', 'También puedes ir a ProG → PASS (9989) → tiMr → SrV.d. Confirma un intervalo positivo para reiniciar el aviso y el contador.'],
+  remote: ['Con el compresor parado, entra en ProG → PASS e introduce 9888. En CtrL → Lo.rE elige YES.', 'Cierra DI04 en el banco y mantén pulsado ⏽ para habilitar el mando remoto.', 'Abre y cierra DI04 para comprobar el paro y el arranque. Un paro con ⏽ deshabilita el mando remoto.'],
+  power: ['Con el compresor parado, entra en ProG → PASS e introduce 9888. En CtrL activa Ar.AF y revisa Ar.d.', 'Al volver a la pantalla principal, comprueba que aparece el triángulo. Arranca, corta la tensión y restablécela para ver la cuenta atrás.', 'Repite el corte y pulsa ⏽ durante la cuenta atrás para cancelarla.']
+};
+const defaults = () => ({
+  powered:true, locked:false, command:false, remoteArmed:false, di:false, countdown:0, resume:false,
+  phase:'Parado', timer:0, pressure:6.4, manualPressure:false, heat:78, demand:35, trip:null,
+  overload:false, emergency:false, resetTime:0,
+  band:1, low1:7, high1:8, low2:8, high2:9, tUnit:0, pUnit:0, light:60, elapsedUi:0,
+  machineMode:'L-U', starter:'Y-d', maxPressure:10, wizard:null,
+  service:250, serviceInterval:250, serviceRead:false, resetFromData:false,
+  remote:0, arav:0, delay:30, hourlyLimit:10, clock:0, recentStarts:[],
+  runHours:1248, loadHours:870, moduleHours:2110, starts:523, loadOps:1337,
+  screen:'home', cursor:0, measure:0, edit:null, viewing:false, password:0, passwordDigits:'', unlock:null
+});
+let s = defaults();
+const activeLow = () => s['low'+s.band];
+const activeHigh = () => s['high'+s.band];
+const warning = () => s.heat >= 110;
+const pressureTripLimit = () => activeHigh()+1.5;
+const faultNames = {heat:'Alta temperatura del elemento',pressure:'Sobrepresión de salida',overload:'Sobrecarga del motor',emergency:'Parada de emergencia'};
+function activeFault() {
+  if (s.emergency) return 'emergency';
+  if (s.overload) return 'overload';
+  if (s.heat>=115) return 'heat';
+  if (s.pressure>pressureTripLimit()) return 'pressure';
+  return null;
+}
+const faultStillPresent = () => activeFault() || (s.trip==='heat' && warning());
+const rows = {
+  main: () => [['dAtA','Contadores'],['ProG','Programación'],['tESt','Prueba del display'],['inFo','Información']],
+  data: () => [
+    ['d. 1','Horas de marcha ×1000',(s.runHours/1000).toFixed(3)],
+    ['d. 2','Arranques del motor ×1000',(s.starts/1000).toFixed(3)],
+    ['d. 3','Horas del módulo',Math.floor(s.moduleHours),'h'],
+    ['d. 4','Horas de carga',Math.floor(s.loadHours),'h'],
+    ['d. 5','Activaciones de la electroválvula de carga ×1000',(s.loadOps/1000).toFixed(3)],
+    ['d. 6','Temporizador de servicio · horas restantes',Math.max(0,Math.ceil(s.service)),'h']
+  ],
+  prog: () => [
+    ['rEG.P','Regulación de presión'],['diSP','Ajustes del display'],
+    ...(s.unlock==='timer' ? [['tiMr','Temporizador de servicio']] : []),
+    ...(s.unlock==='control' ? [['CtrL','Control remoto y ARAVF']] : []),
+    ...(s.unlock==='wizard' ? [['WiZ','Asistente de programación']] : []),
+    ['PASS','Acceso a menús ocultos']
+  ],
+  info: () => [
+    ['P.rEL','Versión del mapa de parámetros','01'],
+    ['F.rRl','Versión del firmware','1.00'],
+    ['F.dAY','Día de publicación del firmware','07'],
+    ['F.Mnt','Mes de publicación del firmware','11'],
+    ['F.YAr','Año de publicación del firmware','2026'],
+    ['SEr.n','Número de serie','0001']
+  ],
+  reg: () => [
+    ['Pr.SL','Selección de banda activa','band',1,2,1],
+    ['LPr.1','Presión de carga · banda 1','low1',4,s.maxPressure,.1],
+    ['UPr.1','Presión de descarga · banda 1','high1',4,s.maxPressure,.1],
+    ['LPr.2','Presión de carga · banda 2','low2',4,s.maxPressure,.1],
+    ['UPr.2','Presión de descarga · banda 2','high2',4,s.maxPressure,.1]
+  ],
+  disp: () => [['tEMP','Unidad de temperatura','tUnit',0,1,1],['PrES','Unidad de presión','pUnit',0,2,1],['bC.LG','Tiempo de retroiluminación','light',0,120,5]],
+  timer: () => [['SrV.d','Intervalo y restablecimiento del aviso de servicio','service',0,9999,1]],
+  control: () => [['Lo.rE','Arranque y paro local/remoto','remote',0,1,1],['Ar.AF','Rearranque tras corte','arav',0,1,1],['Ar.d','Retardo al rearranque','delay',0,120,1],['nHCA','Límite de arranques por hora','hourlyLimit',0,10,1]]
+};
+const adjustable = ['reg','disp','timer','control'];
+const current = () => rows[s.screen]?.()[s.cursor];
+const screenNames = {main:'MENÚ PRINCIPAL',data:'dAtA',prog:'ProG',info:'inFo',reg:'rEG.P',disp:'diSP',timer:'tiMr',control:'CtrL'};
+const pressureUnits = ['bar','psi','MPa'];
+const wizardSteps = [
+  ['rESt','Abrir la reprogramación',['no','YES']],
+  ['Modo','Tipo de máquina',['L-U','S-S']],
+  ['Arranque','Tipo de arranque',['Y-d','doL']],
+  ['Unidad','Unidad de presión',['bAr','PSI']],
+  ['Placa','Presión máxima de ejemplo',[10,8]]
+];
+function pressText(value) {
+  return [value.toFixed(1),(value*14.5038).toFixed(0),(value/10).toFixed(2)][s.pUnit];
+}
+function valueText(key, value) {
+  if (key.startsWith('low') || key.startsWith('high')) return [pressText(value),pressureUnits[s.pUnit]];
+  if (key==='tUnit') return [value ? '°F' : '°C',''];
+  if (key==='pUnit') return [pressureUnits[value],''];
+  if (key==='remote') return [value ? 'YES' : 'no',''];
+  if (key==='arav') return [value ? 'On' : 'OFF',''];
+  if (key==='service') return [value,'h'];
+  if (key==='light'||key==='delay') return [value,'s'];
+  return [value,''];
+}
+function note(message, record=false) {
+  $('notice').textContent = message;
+  if (!record) return;
+  const item = document.createElement('li');
+  item.textContent = new Date().toLocaleTimeString('es-ES')+' · '+message;
+  const log = $('log');
+  log.prepend(item);
+  if (log.children.length > 30) log.lastElementChild.remove();
+}
+const segmentShapes = [
+  '10,0 31,0 33,2 29,5 12,5 8,2',
+  '34,4 36,6 32,22 28,25 27,22 31,8',
+  '28,28 30,30 26,46 22,49 21,46 25,32',
+  '5,47 21,47 23,50 19,52 1,52 0,50',
+  '3,31 7,27 8,31 4,46 1,48 0,45',
+  '9,7 12,5 13,8 9,22 5,25 4,22',
+  '10,24 26,24 28,26 24,29 8,29 6,27'
+];
+const glyphs = {
+  '0':'abcdef','1':'bc','2':'abdeg','3':'abcdg','4':'bcfg','5':'acdfg',
+  '6':'acdefg','7':'abc','8':'abcdefg','9':'abcdfg','-':'g',
+  A:'abcefg',b:'cdefg',C:'adef',c:'deg',d:'bcdeg',E:'adefg',F:'aefg',
+  G:'acdef',H:'bcefg',h:'cefg',I:'bc',i:'c',L:'def',M:'abcef',n:'ceg',O:'abcdef',
+  o:'cdeg',P:'abefg',r:'eg',S:'acdfg',t:'defg',U:'bcdef',u:'cde',V:'bcdef',W:'bcdef',Y:'bcdfg',Z:'abdeg'
+};
+const segmentNames = 'abcdefg';
+const marks = ['flow','flow-in','flow-out','run','clock','pressure','heat','alert','remote','service','emergency','motor','inhibit','thousands','hours','mpa','c','psi','f','bar'];
+$('lcdDigits').innerHTML = Array.from({length:4},(_,index)=>{
+  const polygons=segmentShapes.map((points,i)=>
+    '<polygon class="segment" id="digit-'+index+'-'+segmentNames[i]+'" points="'+points+'"/>'
+  ).join('');
+  return '<g transform="translate('+(42+38*index)+' 54)">'+polygons+
+    '<circle class="segment" id="digit-'+index+'-dot" cx="33" cy="50" r="2.2"/></g>';
+}).join('');
+function drawLcd(value,unit,top,flash) {
+  const cells=[];
+  for (const letter of String(value)) {
+    if (letter==='.' && cells.length) cells[cells.length-1].dot=true;
+    else cells.push({letter,dot:false});
+  }
+  const fullTest=s.screen==='test' && s.viewing && s.powered && !s.trip && !s.countdown;
+  const offset=Math.max(0,4-cells.length);
+  for (let index=0;index<4;index++) {
+    const cell=cells[index-offset];
+    const letter=cell?.letter;
+    const lit=glyphs[letter] ?? glyphs[letter?.toUpperCase()] ?? glyphs[letter?.toLowerCase()] ?? '';
+    for (const name of segmentNames) $('digit-'+index+'-'+name).classList.toggle('lit',lit.includes(name));
+    $('digit-'+index+'-dot').classList.toggle('lit',fullTest || !!cell?.dot);
+  }
+  $('lcdDigits').classList.toggle('blink',flash);
+  const selected = new Set();
+  const unitMark={bar:'bar',psi:'psi',MPa:'mpa','°C':'c','°F':'f',h:'hours'}[unit || value];
+  if (unitMark) selected.add(unitMark);
+  if (s.countdown || s.screen==='data' || unit==='h') selected.add('clock');
+  if (s.screen==='data' && ['d. 1','d. 2','d. 5'].includes(top)) selected.add('thousands');
+  if (s.screen==='data' && top==='d. 1') selected.add('hours');
+  if (['bar','psi','MPa'].includes(unit) && s.screen!=='reg' && value!=='rEG.P') selected.add('pressure');
+  if (s.screen==='reg' && (value==='SEL.1'||value==='SEL.2')) selected.add('flow');
+  if (unit==='°C' || unit==='°F' || warning() || s.trip==='heat' || s.trip==='overload') selected.add('heat');
+  if (s.trip==='heat' || s.trip==='overload') {
+    selected.add('pressure');
+    selected.add('run');
+  }
+  if (s.trip==='overload') selected.add('motor');
+  if (s.trip==='emergency') selected.add('emergency');
+  const showAlarmIcons=s.powered && !s.resetTime && !fullTest;
+  $('mark-heat').classList.toggle('blink',showAlarmIcons && (warning() || s.trip==='heat'));
+  $('mark-pressure').classList.toggle('blink',showAlarmIcons && s.trip==='heat');
+  $('mark-motor').classList.toggle('blink',showAlarmIcons && s.trip==='overload');
+  $('mark-emergency').classList.toggle('blink',showAlarmIcons && s.trip==='emergency');
+  const statusScreen=s.powered && s.screen==='home' && !s.trip && !s.countdown;
+  const motorRunning=['Arrancando','En carga','En descarga'].includes(s.phase);
+  if (statusScreen) {
+    selected.add('flow');
+    selected.add('run');
+    if (s.phase==='En carga') selected.add('flow-in');
+    if (s.phase==='En descarga') selected.add('flow-out');
+  }
+  $('mark-run').classList.toggle('rotating',statusScreen && motorRunning);
+  if (s.powered && s.arav && s.screen==='home') selected.add('alert');
+  if (s.remoteArmed || (s.powered && s.remote && s.screen==='home')) selected.add('remote');
+  if (s.service<=0 || s.screen==='timer' || s.screen==='serviceReset' || (s.screen==='data' && s.cursor===5)) selected.add('service');
+  if (motorRunning && s.screen==='home' && s.measure===0) {
+    selected.delete('service');
+  }
+  if (s.resetTime) selected.clear();
+  for (const mark of marks) $('mark-'+mark).classList.toggle('lit',fullTest || selected.has(mark));
+}
+function show(top,value,unit='',bottom='',flash=false) {
+  $('lcdCounter').textContent = s.screen==='data' && top===current()[0] ? top.replace(' ','') : '';
+  $('lcdTop').textContent = top;
+  $('lcdValue').textContent = value;
+  $('lcdUnit').textContent = unit;
+  $('lcdBottom').textContent = bottom;
+  drawLcd(value,unit,top,flash);
+  $('lcd').setAttribute('aria-label',[top,value,unit,bottom].filter(Boolean).join(' ') || 'Pantalla apagada');
+}
+function render() {
+  $('machine').textContent = s.phase;
+  $('pressure').textContent = s.pressure.toFixed(1)+' bar';
+  $('temperature').textContent = s.heat+' °C';
+  $('demandValue').textContent = s.demand+' %';
+  $('heatValue').textContent = s.heat+' °C';
+  $('heat').value=s.heat;
+  $('pressureDial').value=s.pressure.toFixed(1);
+  $('pressureDialValue').textContent=s.pressure.toFixed(1)+' bar · '+(s.manualPressure ? 'manual' : 'automática');
+  $('pressureAuto').disabled=!s.manualPressure;
+  $('overload').textContent=s.overload ? 'Retirar sobrecarga del motor' : 'Provocar sobrecarga del motor';
+  $('overload').setAttribute('aria-pressed',String(s.overload));
+  $('emergency').textContent=s.emergency ? 'Liberar parada de emergencia' : 'Pulsar parada de emergencia';
+  $('emergency').setAttribute('aria-pressed',String(s.emergency));
+  $('powerSwitch').textContent = s.powered ? 'Cortar tensión' : 'Restablecer tensión';
+  $('remoteSwitch').textContent = s.di ? 'Abrir DI04' : 'Cerrar DI04';
+  $('keyboardLock').textContent = s.locked ? 'Desbloquear teclado' : 'Bloquear teclado';
+  $('lcd').classList.toggle('off',!s.powered);
+  $('lcd').classList.toggle('dim',s.light>0 && s.elapsedUi>s.light);
+  $('power').classList.toggle('on',s.powered);
+  $('alarm').classList.toggle('on',s.powered&&(warning()||s.trip));
+  $('alarm').classList.toggle('blink',s.powered&&s.trip);
+  $('service').classList.toggle('on',s.powered&&s.service<=0);
+  if (!s.powered) return show('','');
+  if (s.resetTime) return show('Rearme de alarma','RST','','Confirmando el rearme');
+  if (s.trip) {
+    const instruction=faultStillPresent() ? 'Elimina la causa' : 'Mantén ↵ 5 s para rearmar';
+    if (s.trip==='heat') return show(faultNames.heat,s.tUnit ? Math.round(s.heat*9/5+32) : s.heat,s.tUnit ? '°F' : '°C',instruction,true);
+    if (s.trip==='pressure') return show(faultNames.pressure,pressText(s.pressure),pressureUnits[s.pUnit],instruction,true);
+    if (s.trip==='overload') return show(faultNames.overload,pressText(s.pressure),pressureUnits[s.pUnit],instruction);
+    return show(faultNames[s.trip],'','',instruction);
+  }
+  if (s.countdown>0) return show('REARRANQUE',Math.ceil(s.countdown),'s','⏽ Cancela la cuenta');
+  if (s.screen==='home') {
+    const top = warning() ? '⚠ TEMPERATURA ALTA' : s.locked ? 'TECLADO BLOQUEADO' : s.phase.toUpperCase();
+    if (s.measure===2) return show(top,'SErU','','Servicio vencido',true);
+    if (s.measure===1) return show(top,s.tUnit ? Math.round(s.heat*9/5+32) : s.heat,s.tUnit ? '°F' : '°C','Temperatura del elemento');
+    return show(top,pressText(s.pressure),pressureUnits[s.pUnit],s.service<=0 ? 'SErU · Servicio vencido' : 'Presión de red');
+  }
+  if (s.screen==='test') return s.viewing
+    ? show('tSt.1','8.8.8.8','','Prueba de todos los símbolos y segmentos')
+    : show('tESt','tSt.1','','↵ inicia la prueba del LCD');
+  if (s.screen==='pass') {
+    const value=s.resetFromData && !s.password && !s.passwordDigits ? 'PASS' : s.password;
+    return show(s.resetFromData ? 'PASS1' : 'PASS',value,'','▲ ▼ o teclado · ↵',true);
+  }
+  if (s.screen==='serviceReset') return show('Rearme de servicio',s.cursor ? 'rES.y' : 'rES.n','h','▲ ▼ selecciona · ↵ confirma',true);
+  if (s.screen==='wizard') {
+    if (!s.wizard) return show('WiZ','rESt','','↵ abre la reprogramación');
+    const [step,label,options]=wizardSteps[s.wizard.step];
+    const choice=options[s.cursor];
+    if (step==='Placa') {
+      const psi=s.wizard.pUnit===1;
+      return show('WiZ',psi ? Math.round(choice*14.5038) : choice.toFixed(2),psi ? 'psi' : 'bar',label,true);
+    }
+    return show(step,choice,'',label,true);
+  }
+  const [code,label,value,unit] = current();
+  if (s.screen==='data' && s.cursor===5 && !s.serviceRead) return show('dAtA','d.  6','h',label);
+  if (s.screen==='reg') {
+    const display=s.edit ? (value==='band' ? 'SEL.'+s.edit.value : pressText(s.edit.value)) : code;
+    return show(s.edit ? code : 'rEG.P',display,pressureUnits[s.pUnit],label,!!s.edit);
+  }
+  if (adjustable.includes(s.screen)) {
+    if (!s.edit) return show(screenNames[s.screen],code,'',label);
+    const shown = valueText(value,s.edit.value);
+    return show(code,shown[0],shown[1],label,true);
+  }
+  if (s.screen==='info') return s.viewing ? show(code,value,'',label) : show('inFo',code,'',label);
+  if (s.screen==='data') return show(code,value,unit,label);
+  show(screenNames[s.screen],code,code==='rEG.P' ? pressureUnits[s.pUnit] : '',label);
+}
+function move(screen,cursor=0) {
+  s.screen=screen;
+  s.cursor=cursor;
+  s.edit=null;
+  s.serviceRead=false;
+  s.resetFromData=false;
+  s.wizard=null;
+  s.viewing=false;
+}
+function back() {
+  if (!s.powered || s.trip || s.countdown) return;
+  s.elapsedUi=0;
+  if (s.edit) {s.edit=null; return render();}
+  if (s.viewing) {s.viewing=false; return render();}
+  if (s.resetFromData || s.screen==='serviceReset') {
+    move('data',5);
+    s.serviceRead=true;
+  }
+  else if (s.screen==='prog') move('main',1);
+  else if (s.screen==='data') move('main',0);
+  else if (s.screen==='info') move('main',3);
+  else if (s.screen==='test') move('main',2);
+  else if (s.screen==='wizard') move('prog',2);
+  else if (adjustable.includes(s.screen)||s.screen==='pass') move('prog');
+  else move('home');
+  render();
+}
+function arrow(dir,step=1) {
+  if (!s.powered || s.trip || s.countdown) return;
+  s.elapsedUi=0;
+  if (s.screen==='home') s.measure=(s.measure+dir+(s.service<=0?3:2))%(s.service<=0?3:2);
+  else if (s.screen==='serviceReset') s.cursor=1-s.cursor;
+  else if (s.screen==='wizard' && s.wizard) s.cursor=1-s.cursor;
+  else if (s.screen==='pass') {
+    s.password=(s.password+dir*step+10000)%10000;
+    s.passwordDigits='';
+  } else if (s.edit) {
+    const [,,,min,max,inc]=current();
+    s.edit.value=Math.min(max,Math.max(min,Math.round((s.edit.value+dir*inc*step)*10)/10));
+  } else if (rows[s.screen]) {
+    const count=rows[s.screen]().length;
+    s.cursor=(s.cursor+dir+count)%count;
+    s.serviceRead=false;
+    s.viewing=false;
+  }
+  render();
+}
+function enter() {
+  if (!s.powered || s.countdown) return;
+  s.elapsedUi=0;
+  if (s.resetTime) return;
+  if (s.trip) return note('Elimina la causa y mantén ↵ cinco segundos para rearmar.');
+  if (s.screen==='home') move('main');
+  else if (s.screen==='main') move(['data','prog','test','info'][s.cursor]);
+  else if (s.screen==='data' && s.cursor===5) s.serviceRead=!s.serviceRead;
+  else if (s.screen==='serviceReset') {
+    if (s.cursor) {
+      s.service=s.serviceInterval;
+      if (s.service>0 && s.measure===2) s.measure=0;
+      note('Temporizador de servicio reiniciado.',true);
+    }
+    move('data',5);
+    s.serviceRead=true;
+  }
+  else if (s.screen==='wizard') {
+    if (!s.wizard) s.wizard={step:0};
+    else if (s.wizard.step===0 && !s.cursor) move('wizard');
+    else {
+      const step=s.wizard.step;
+      const choice=wizardSteps[step][2][s.cursor];
+      if (step===1) s.wizard.machineMode=choice;
+      if (step===2) s.wizard.starter=choice;
+      if (step===3) s.wizard.pUnit=s.cursor;
+      if (step===4) {
+        const {machineMode,starter,pUnit}=s.wizard;
+        Object.assign(s,{machineMode,starter,pUnit,maxPressure:choice});
+        for (const band of [1,2]) {
+          s['high'+band]=Math.min(s['high'+band],choice);
+          s['low'+band]=Math.min(s['low'+band],s['high'+band]-.5);
+        }
+        note('Perfil aplicado · '+machineMode+' · '+starter+' · '+choice+' bar máx.',true);
+        move('home');
+        s.measure=0;
+      } else s.wizard.step++;
+    }
+    s.cursor=0;
+  }
+  else if (s.screen==='prog') {
+    const target={'rEG.P':'reg',diSP:'disp',tiMr:'timer',CtrL:'control',WiZ:'wizard',PASS:'pass'}[current()[0]];
+    if (target==='control'&&s.command) return note('Para el compresor antes de modificar CtrL.');
+    if (target==='wizard'&&(s.command||s.remoteArmed)) return note('Para el compresor antes de entrar en WiZ.');
+    s.password=0;
+    s.passwordDigits='';
+    move(target);
+  } else if (s.screen==='pass') {
+    if (s.resetFromData) {
+      if (s.password!==9989) return note('Clave incorrecta para el rearme de servicio.');
+      move('serviceReset');
+      return render();
+    }
+    if (s.password===9989) {
+      s.unlock='timer';
+      note('tiMr disponible en ProG.',true);
+    } else if (s.password===9888 && !s.command) {
+      s.unlock='control';
+      note('CtrL disponible en ProG.',true);
+    } else if (s.password===4231 || s.password===4321) {
+      s.unlock='wizard';
+      note('WiZ disponible en ProG.',true);
+    } else {
+      s.unlock=null;
+      note(s.password===9888 ? 'Para el compresor antes de desbloquear CtrL.' : 'Clave incorrecta.');
+    }
+    move('prog',s.unlock ? 2 : 0);
+  } else if (adjustable.includes(s.screen)) {
+    const [,,key]=current();
+    if (!s.edit) s.edit={value:key==='service' ? s.serviceInterval : s[key]};
+    else {
+      const {value}=s.edit;
+      if (s.screen==='reg' && key!=='band') {
+        const candidate={...s,[key]:value};
+        const band=key.slice(-1);
+        const gapTenths=Math.round((candidate['high'+band]-candidate['low'+band])*10);
+        if (gapTenths<5) return note('La presión de descarga debe superar a la de carga en al menos 0,5 bar.');
+      }
+      s[key]=value;
+      if (key==='remote'&&!value) s.remoteArmed=false;
+      if (key==='service') {
+        s.serviceInterval=value;
+        if (value>0&&s.measure===2) s.measure=0;
+      }
+      s.edit=null;
+      note('Ajuste guardado · '+current()[1],true);
+    }
+  } else if (s.screen==='test'||s.screen==='info') s.viewing=!s.viewing;
+  render();
+}
+function setPhase(phase) {
+  if (s.phase===phase) return;
+  s.phase=phase;
+  s.timer=0;
+  if (phase==='Arrancando') {
+    s.starts++;
+    s.recentStarts.push(s.clock);
+  }
+  if (phase==='En carga') s.loadOps++;
+  note('Estado · '+phase,true);
+}
+function stop() {
+  s.command=false;
+  s.remoteArmed=false;
+  s.countdown=0;
+  if (!s.trip) setPhase('Parado');
+}
+function start() {
+  if (s.screen==='wizard') return note('Sal de WiZ antes de arrancar.');
+  if (!s.powered || s.trip || s.command || s.countdown) return;
+  if (s.locked) return note('Desbloquea el teclado para arrancar.');
+  if (s.remote&&!s.di) return note('Cierra DI04 para habilitar el mando remoto.');
+  s.remoteArmed=!!s.remote;
+  s.command=true;
+  if (s.pressure<=activeLow()) setPhase('Arrancando');
+  else setPhase('En espera');
+  render();
+}
+function latchFault() {
+  if (!s.powered || s.trip) return false;
+  const cause=activeFault();
+  if (!cause) return false;
+  stop();
+  s.trip=cause;
+  setPhase('Alarma');
+  note('Parada · '+faultNames[cause],true);
+  return true;
+}
+function setHeat(value) {
+  const wasWarning=warning();
+  s.heat=value;
+  if (!latchFault() && s.powered && !s.trip && warning()!==wasWarning) {
+    note(warning() ? 'Aviso de temperatura alta. LED rojo fijo.' : 'Aviso de temperatura resuelto.',true);
+  }
+  render();
+}
+function setManualPressure(value) {
+  s.manualPressure=true;
+  s.pressure=value;
+  latchFault();
+  render();
+}
+function tick(dt) {
+  s.clock+=dt;
+  while (s.recentStarts.length && s.clock-s.recentStarts[0]>=3600) s.recentStarts.shift();
+  const consumption=s.demand*.004;
+  if (!s.manualPressure) s.pressure=Math.max(0,s.pressure-consumption*dt);
+  if (!s.powered) return render();
+  s.elapsedUi+=dt;
+  s.moduleHours+=dt/3600;
+  if (s.resetTime) {
+    if (faultStillPresent()) {
+      s.resetTime=0;
+      note('La causa sigue activa. Rearme interrumpido.',true);
+    } else {
+      s.resetTime=Math.max(0,s.resetTime-dt);
+      if (!s.resetTime) {
+        s.trip=null;
+        move('home');
+        s.measure=0;
+        setPhase('Parado');
+        note('Alarma rearmada. Mantén ⏽ para arrancar.',true);
+      }
+    }
+    return render();
+  }
+  if (s.trip || latchFault()) return render();
+  if (s.countdown>0) {
+    s.countdown=Math.max(0,s.countdown-dt);
+    if (!s.countdown) {
+      if (s.remoteArmed && !s.di) setPhase('Remoto en espera');
+      else {
+        s.command=true;
+        setPhase(s.pressure<=activeLow() ? 'Arrancando' : 'En espera');
+      }
+    }
+    return render();
+  }
+  s.timer+=dt;
+  if (['Arrancando','En carga','En descarga'].includes(s.phase)) {
+    s.runHours+=dt/3600;
+    s.service=Math.max(0,s.service-dt/3600);
+  }
+  if (s.phase==='En carga') {
+    s.loadHours+=dt/3600;
+    if (!s.manualPressure) s.pressure+=.62*dt;
+    if (s.pressure>=activeHigh()) {
+      setPhase(s.machineMode==='S-S' ? 'En espera' : 'En descarga');
+    }
+  } else if (s.command && s.phase==='En descarga') {
+    if (s.pressure<=activeLow()) setPhase('En carga');
+    else if (s.timer>=6 && s.recentStarts.length<s.hourlyLimit) setPhase('En espera');
+  } else if (s.command && s.phase==='En espera' && s.pressure<=activeLow() && s.timer>=2
+      && (!s.hourlyLimit || s.recentStarts.length<s.hourlyLimit)) {
+    setPhase('Arrancando');
+  } else if (s.phase==='Arrancando' && s.timer>=(s.starter==='doL' ? 1 : 2)) {
+    if (s.pressure<activeHigh()) setPhase('En carga');
+    else setPhase(s.machineMode==='S-S' ? 'En espera' : 'En descarga');
+  }
+  render();
+}
+function switchPower() {
+  if (s.powered) {
+    s.resume=s.command || s.remoteArmed || s.countdown>0;
+    s.command=false;
+    s.countdown=0;
+    s.resetTime=0;
+    s.powered=false;
+    s.unlock=null;
+    setPhase('Sin tensión');
+  } else {
+    s.powered=true;
+    s.elapsedUi=0;
+    move('home');
+    if (s.trip || latchFault()) {
+      stop();
+      setPhase('Alarma');
+    } else if (s.arav && s.resume) {
+      if (s.delay) {
+        s.countdown=s.delay;
+        setPhase('Cuenta atrás');
+      } else if (s.remoteArmed && !s.di) setPhase('Remoto en espera');
+      else {
+        s.command=true;
+        setPhase(s.pressure<=activeLow() ? 'Arrancando' : 'En espera');
+      }
+    } else stop();
+    s.resume=false;
+  }
+  render();
+}
+function switchRemote() {
+  s.di=!s.di;
+  if (s.powered && !s.trip && !s.countdown && s.remoteArmed) {
+    s.command=s.di;
+    setPhase(!s.di ? 'Remoto en espera' : s.pressure<=activeLow() ? 'Arrancando' : 'En espera');
+  }
+  render();
+}
+function toggleLock() {
+  if (!s.powered) return;
+  s.locked=!s.locked;
+  note(s.locked ? 'Teclado bloqueado para arranque. El paro sigue disponible.' : 'Teclado desbloqueado.');
+  render();
+}
+const inDataMenu=()=>s.screen==='data' || s.resetFromData || s.screen==='serviceReset';
+function actionRun(long) {
+  if (!s.powered || s.trip) return;
+  s.elapsedUi=0;
+  if (!long && !s.countdown && s.screen!=='home') {
+    move('home');
+    s.measure=0;
+    return render();
+  }
+  if (s.command || s.remoteArmed || s.countdown) {
+    stop();
+    render();
+  } else if (long && !inDataMenu()) start();
+  else note('Mantén pulsado ⏽ hasta que arranque.');
+}
+const heldArrows=new Set();
+const atServiceCounter=()=>s.powered && !s.trip && !s.countdown && s.screen==='data' && s.cursor===5;
+function holdEnter() {
+  if (s.powered && s.trip) {
+    if (s.resetTime) return;
+    if (faultStillPresent()) return note('La causa sigue activa. Corrígela antes de rearmar.');
+    s.resetTime=2;
+    return render();
+  }
+  if (!atServiceCounter()) return back();
+  move('pass');
+  s.resetFromData=true;
+  s.password=0;
+  s.passwordDigits='';
+  s.elapsedUi=0;
+  render();
+}
+function bindKey(id,shortAction,longAction,repeat=false) {
+  const key=$(id);
+  let timer, interval, active=false, handled=false, repeats=0;
+  let touchId=null;
+  const isArrow=id==='up'||id==='down';
+  const end=activate=>{
+    if (!active) return;
+    active=false;
+    clearTimeout(timer);
+    clearInterval(interval);
+    key.classList.remove('hold');
+    if (isArrow) heldArrows.delete(id);
+    if (activate && !handled) shortAction();
+  };
+  const begin=()=>{
+    if (active) return;
+    active=true;
+    handled=false;
+    repeats=0;
+    key.classList.add('hold');
+    if (isArrow) {
+      heldArrows.add(id);
+      if (heldArrows.size===2) {
+        heldArrows.clear();
+        for (const other of ['up','down']) $(other).dispatchEvent(new Event('cancelkey'));
+        toggleLock();
+        return;
+      }
+    }
+    if (id==='run' && s.powered && (s.countdown || (s.screen==='home' && (s.command || s.remoteArmed)))) {
+      handled=true;
+      shortAction();
+      return;
+    }
+    timer=setTimeout(()=>{
+      handled=true;
+      longAction(1);
+      if (repeat) interval=setInterval(()=>{
+        repeats++;
+        longAction(s.screen==='pass' ? (repeats>12 ? 1000 : repeats>5 ? 100 : 10) : 1);
+      },110);
+    },id==='run' ? 1300 : repeat ? 420 : (s.trip || atServiceCounter()) ? 5000 : 650);
+  };
+  key.addEventListener('pointerdown',e=>{
+    if (e.pointerType==='touch' || e.button!==0) return;
+    key.setPointerCapture?.(e.pointerId);
+    begin();
+  });
+  key.addEventListener('pointerup',e=>{if (e?.pointerType!=='touch') end(true);});
+  for (const event of ['pointercancel','lostpointercapture']) {
+    key.addEventListener(event,e=>{if (e.pointerType!=='touch') end(false);});
+  }
+  key.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    if (active || touchId!==null) return;
+    touchId=e.changedTouches[0].identifier;
+    begin();
+  },{passive:false});
+  for (const event of ['touchend','touchcancel']) {
+    key.addEventListener(event,e=>{
+      if (!Array.from(e.changedTouches).some(touch=>touch.identifier===touchId)) return;
+      e.preventDefault();
+      touchId=null;
+      end(event==='touchend');
+    },{passive:false});
+  }
+  for (const event of ['blur','cancelkey']) key.addEventListener(event,()=>{
+    touchId=null;
+    end(false);
+  });
+  key.addEventListener('contextmenu',e=>e.preventDefault());
+  key.addEventListener('keydown',e=>{
+    if (![' ','Enter'].includes(e.key)) return;
+    e.preventDefault();
+    if (!e.repeat) begin();
+  });
+  key.addEventListener('keyup',e=>{
+    if (![' ','Enter'].includes(e.key)) return;
+    e.preventDefault();
+    end(true);
+  });
+  key.addEventListener('click',e=>{if (e.detail===0 && !active) shortAction();});
+}
+bindKey('run',()=>actionRun(false),()=>actionRun(true));
+bindKey('enter',enter,holdEnter);
+bindKey('up',()=>arrow(1),step=>arrow(1,step),true);
+bindKey('down',()=>arrow(-1),step=>arrow(-1,step),true);
+document.addEventListener('keydown',e=>{
+  if (e.key==='Escape') back();
+  if (e.target.matches('input,select,textarea') || s.screen!=='pass' || !s.powered || s.trip || s.countdown) return;
+  if (/^[0-9]$/.test(e.key)) {
+    s.passwordDigits=(s.passwordDigits+e.key).slice(-4);
+    s.password=Number(s.passwordDigits);
+    s.elapsedUi=0;
+    render();
+  } else if (e.key==='Backspace') {
+    e.preventDefault();
+    s.passwordDigits=s.passwordDigits.slice(0,-1);
+    s.password=Number(s.passwordDigits);
+    render();
+  }
+});
+$('demand').addEventListener('input',e=>{s.demand=Number(e.target.value);render();});
+$('heat').addEventListener('input',e=>setHeat(Number(e.target.value)));
+$('pressureDial').addEventListener('input',e=>setManualPressure(Number(e.target.value)));
+$('pressureAuto').onclick=()=>{s.manualPressure=false;render();};
+$('highTemp').onclick=()=>setHeat(Math.max(s.heat,122));
+$('highPressure').onclick=()=>setManualPressure(Math.max(s.pressure,Math.round((pressureTripLimit()+.1)*10)/10));
+for (const cause of ['overload','emergency']) {
+  $(cause).onclick=()=>{
+    s[cause]=!s[cause];
+    latchFault();
+    render();
+  };
+}
+$('powerSwitch').onclick=switchPower;
+$('remoteSwitch').onclick=switchRemote;
+$('keyboardLock').onclick=toggleLock;
+$('back').onclick=back;
+$('serviceDue').onclick=()=>{
+  s.service=0;
+  if (s.screen==='home') s.measure=2;
+  note('Temporizador vencido. Consulta dAtA → d. 6.',true);
+  render();
+};
+function showLesson() {
+  $('steps').replaceChildren(...lessons[$('lesson').value].map(step=>{
+    const li=document.createElement('li');
+    li.textContent=step;
+    return li;
+  }));
+}
+$('lesson').onchange=showLesson;
+$('resetLab').onclick=()=>{
+  s=defaults();
+  $('demand').value=s.demand;
+  $('heat').value=s.heat;
+  $('log').replaceChildren();
+  note('Banco reiniciado. Listo para practicar.');
+  render();
+};
+showLesson();
+note('Listo. Mantén ⏽ para arrancar o pulsa ↵ para explorar el menú.');
+render();
+let lastTick=performance.now();
+setInterval(()=>{
+  const now=performance.now();
+  tick(Math.min(1,(now-lastTick)/1000));
+  lastTick=now;
+},250);
+</script>
+</body>
+</html>
