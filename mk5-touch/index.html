@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BOTTY · Simulador MK5 Touch</title>
+<style>
+:root{color-scheme:dark;--bg:#111820;--card:#1a2530;--line:#344451;--text:#f3f7fa;--muted:#b2c3ce;--blue:#7cd2f5;--green:#a3e477;--red:#ff8c81;--amber:#ffd381}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top left,#243947,var(--bg) 55%);color:var(--text);font:16px/1.5 system-ui,sans-serif}button,input,select{font:inherit}button,select{color:inherit;cursor:pointer}button{touch-action:manipulation}button:disabled{cursor:default;opacity:.45}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}h1,h2,p{margin:0}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:.24em 0}h2{font-size:1.13rem}.shell{max-width:1220px;margin:auto;padding:clamp(12px,4vw,44px)}header p,.hint,footer{color:var(--muted)}.brand{color:var(--blue);font-weight:800;letter-spacing:.17em;font-size:.75rem}.layout{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(280px,1fr);gap:20px;align-items:start;margin:24px 0 18px}.stack{display:grid;gap:16px}.card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px}.caption{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px}.pill{font-size:.72rem;border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--blue);white-space:nowrap}.body{background:linear-gradient(145deg,#46484a,#141516 40%,#27282a);border-radius:20px;box-shadow:inset 0 1px 4px #8d8e90,0 8px 22px #0008;padding:clamp(8px,2vw,26px);display:grid;grid-template-columns:minmax(0,1fr) 25px;gap:8px;align-items:center}.leds{display:grid;gap:12px;justify-items:center}.led{font-size:.9rem;color:#8d9296;line-height:1}.led.on{color:var(--green);text-shadow:0 0 7px currentColor}.led.alarm.on{color:var(--red)}.led.service.on,.led.voltage.on{color:var(--amber)}.led.blink{animation:blink 1s step-end infinite}@keyframes blink{50%{opacity:.35}}@media(prefers-reduced-motion:reduce){.led.blink{animation:none}}
+.lcd{min-width:0;background:#242424;color:#f8f8f8;position:relative;isolation:isolate;border:2px solid #5d5d5d;border-radius:5px;overflow:hidden;box-shadow:0 0 0 2px #141414;font-size:clamp(.82rem,1.7vw,1rem);touch-action:pan-y}.lcd button{border:0;background:#434343;min-height:42px;border-radius:3px}.lcd button:hover:not(:disabled){background:#575757}.lcd .bar{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;min-height:42px;background:#686868}.bar strong{font-weight:650;padding:0 7px;overflow-wrap:anywhere}.lcd .bar button,.lcd .rail button{background:transparent}.surface{display:grid;grid-template-columns:42px minmax(0,1fr);min-height:280px}.rail{background:#303030;display:flex;flex-direction:column;align-items:stretch;gap:2px}.ico{width:23px;height:23px;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.page{background:#363636;padding:8px;min-width:0;max-height:400px;overflow:auto}.home{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:6px;height:100%}.readings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;align-content:start}.lcd .read{padding:8px;text-align:left;min-height:75px}.read.large{grid-column:1/-1;min-height:124px}.read small{display:block;color:#e0e0e0;line-height:1.25}.read b{display:block;text-align:right;margin-top:5px;font-size:clamp(1.02rem,3vw,1.5rem);white-space:nowrap}.read.large b{font-size:clamp(2.4rem,8vw,4.25rem);line-height:1.05}.read b span{font-size:.52em;font-weight:500}.shortcuts{display:grid;grid-template-rows:repeat(3,minmax(44px,1fr));gap:5px}.shortcuts .on,.lcd .alert{color:var(--red)}.lcd .service-on{color:var(--amber)}.lcd .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.lcd .tile{display:grid;place-items:center;align-content:center;gap:5px;min-height:99px;padding:7px 4px;line-height:1.13;overflow-wrap:anywhere}.tile .ico{width:28px;height:28px}.lcd .rows{display:grid;gap:3px}.lcd .row{display:flex;justify-content:space-between;align-items:center;gap:9px;text-align:left;min-height:44px;background:#434343;padding:8px 10px;border-radius:3px}.row span:last-child{text-align:right}.row b{font-weight:600}.lcd .line-info{padding:11px;color:#eee}.lcd .dots{display:flex;justify-content:center;gap:3px}.lcd .dot{background:transparent;min-height:30px;width:37px;color:#bcbcbc}.lcd .dot[aria-current=true]{color:white}.lcd .start{background:#2d5136}.lcd .stop{background:#66352f}.modal{position:absolute;inset:42px 0 0;background:#0009;display:grid;place-items:center;padding:8px;z-index:2}.dialog{width:min(100%,370px);max-height:100%;overflow:auto;background:#454545;border:1px solid #747474;border-radius:4px;padding:12px;box-shadow:0 8px 25px #0009}.dialog h3{font-size:1rem;margin:0 0 8px}.dialog-actions,.stepper{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}.dialog button{padding:5px 12px;background:#585858}.dialog .choices{display:grid;gap:4px}.dialog .selected{outline:2px solid #b3dcf1;outline-offset:-2px}.stepper output{font-size:1.4rem}.clean{position:absolute;inset:0;z-index:3;display:grid;place-items:center;background:#282828;text-align:center}
+.hint{font-size:.83rem;margin-top:10px}.controls{display:grid;gap:10px;margin-top:10px}.control{display:grid;grid-template-columns:1fr auto;gap:4px;font-size:.9rem}.control input{grid-column:1/-1;width:100%;accent-color:var(--blue)}.control output{color:var(--blue);font-variant-numeric:tabular-nums}.actions{display:flex;flex-wrap:wrap;gap:7px}.action,select{border:1px solid var(--line);background:#263844;border-radius:7px;padding:8px 10px;min-height:42px}.action:hover{background:#344958}.action[aria-pressed=true]{border-color:var(--amber);color:var(--amber)}.notice{color:#d1e9f5;border-left:3px solid var(--blue);padding:4px 9px;margin-top:10px;font-size:.85rem}.practice select{width:100%;margin-top:9px}.practice ol{padding-left:22px;margin:10px 0}.practice li+li{margin-top:6px}.practice li{font-size:.87rem}footer{font-size:.8rem}.trend{width:100%;height:130px;background:#303030}.trend polyline{fill:none;stroke:#a9dffa;stroke-width:1.5}.trend path{fill:none;stroke:#565656}
+.read b [data-live]{font-size:inherit;font-weight:inherit}
+[hidden]{display:none!important}@media(max-width:850px){.layout{grid-template-columns:minmax(0,1fr)}}@media(max-width:450px){.card{padding:9px}.body{grid-template-columns:minmax(0,1fr) 13px;gap:4px;padding:7px}.led{font-size:.7rem}.surface{grid-template-columns:34px minmax(0,1fr);min-height:238px}.home{grid-template-columns:minmax(0,1fr) 37px;gap:4px}.readings{gap:3px}.lcd .read{padding:5px}.read.large{min-height:100px}.read small{font-size:.71rem}.page{padding:5px}.lcd .tile{font-size:.74rem;min-height:89px}.pill{font-size:.63rem}.ico{width:20px;height:20px}}
+</style>
+<style>
+.body{padding:clamp(8px,2.4vw,25px);grid-template-columns:clamp(44px,7vw,64px) minmax(0,1fr) 23px;gap:9px;border:1px solid #3d4146;background:linear-gradient(145deg,#31363a,#090b0d 37%,#15191c);box-shadow:inset 0 1px 2px #858d94,inset 0 0 0 4px #111416,0 10px 22px #0008}
+.leds{gap:18px}.led{color:#51565c}.led svg{display:block;width:20px;height:20px}.led.on svg{filter:drop-shadow(0 0 3px currentColor)}.led.alarm.on{color:#ff403e}.led.service.on{color:#32aaff}.led.operation.on{color:#39f477}.led.voltage.on{color:#ff762d}.rail nav{display:grid}
+@media(max-width:450px){.led svg{width:12px;height:12px}}
+.lcd{--header:#08cdeb;--face:#284785;--panel:#345b9e;--tile:#4268ab;--screen-ink:#f0faff;border:2px solid #132448;background:#213769;color:var(--screen-ink);border-radius:4px;font-family:'Arial Narrow',system-ui,sans-serif}
+.lcd .bar{background:var(--header);grid-template-columns:42px minmax(0,1fr) 42px;color:#052748;min-height:38px}.bar strong{font-size:.83rem}.lcd .bar button{min-height:38px;color:#fff}.lcd .bar button:hover:not(:disabled){background:#0084a94d}
+.surface{min-height:clamp(207px,24vw,280px)}.rail{background:#2d4f94}.lcd .rail button:hover:not(:disabled){background:#496eb1}.page{background:var(--face);display:flex;flex-direction:column;padding:7px}.lcd button{background:var(--tile)}.lcd button:hover:not(:disabled){background:#517abc}
+.home{flex:1;grid-template-columns:minmax(0,1fr) 44px;gap:5px}.readings{grid-template-rows:minmax(87px,1.15fr) minmax(78px,1fr);align-content:stretch;gap:5px}.lcd .read{min-height:0;background:var(--panel)}.lcd .read:focus-visible{outline-offset:-3px}.read.large{position:relative;padding-right:21px}.read.large b{padding-right:5px}.read small{color:#f0faff;font-weight:650}.read b span:not([data-live]){font-size:.53em}.lcd .read.read-speed b{font-size:.78rem;text-align:left}.read.blank{border-radius:3px;background:var(--panel)}
+.meter{position:absolute;right:7px;top:14%;bottom:12%;width:6px;background:#1d376d;display:flex;align-items:flex-end}.meter i{width:100%;height:0;background:#8af37d}.temp-track{height:4px;margin-top:7px;background:#1d376d}.temp-track i{display:block;height:100%;background:#8af37d}.speed-scale{display:flex;gap:3px;margin-top:6px}.speed-scale i{height:6px;flex:1;background:#27dbf1}.speed-scale i.on{background:#a1f883}.scale-labels{display:flex;justify-content:space-between;margin-top:1px;font-size:.55rem;color:#e1f9ff}
+.shortcuts{grid-template-rows:repeat(3,minmax(42px,1fr))}.shortcuts button .ico{width:24px;height:24px}.shortcuts .inactive{color:#244578}.lcd .dots{background:#274482}.lcd .dot{min-height:23px;color:#d6ecff;font-size:.8rem}.lcd .tile{background:transparent}.lcd .tile .ico{width:30px;height:30px}.lcd .tiles{flex:1;grid-auto-rows:minmax(90px,1fr);gap:4px}.lcd .row{background:var(--panel)}.lcd button.row:hover:not(:disabled){background:#426cae}
+.bezel-controls{position:relative;isolation:isolate;display:grid;justify-items:center}.bezel-controls::before{content:'';position:absolute;z-index:-1;inset:4px 0;width:28px;margin:auto;border:2px solid #d1d6d5;border-radius:99px;background:linear-gradient(155deg,#484c4c,#141718);box-shadow:0 0 2px #d1d6d56b,inset 0 0 2px #000}.bezel-controls button{display:grid;place-items:center;width:100%;min-height:42px;padding:0;background:transparent;border:0;border-radius:12px;color:#eef1ef}.bezel-controls svg{display:block;width:22px;height:22px;transition:transform .12s}.bezel-controls .start svg{transform:translateY(2px)}.bezel-controls .stop svg{transform:translateY(-2px)}.bezel-controls button:hover:not(:disabled) svg{filter:brightness(1.2)}.bezel-controls button:active:not(:disabled) svg{transform:scale(.87)}
+.service-screen{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:5px;flex:1}.service-gauges{position:relative;display:grid;place-content:center;gap:5px;min-height:164px;padding:8px;background:var(--panel);border-radius:3px}.service-gauge{display:grid;grid-template-columns:13px minmax(90px,160px) 15px;gap:4px;align-items:center}.service-gauge .ico{width:15px;height:15px}.service-gauge .green{color:#9df99b}.service-gauge .cyan{color:#2ae3ff}.gauge{position:relative;display:block;border:1px solid #d7e9ff;min-height:20px;text-align:center;background:#1c3974;font-size:.69rem;white-space:nowrap}.gauge i{position:absolute;right:0;top:0;bottom:0;background:#42c873}.gauge.calendar i{background:#1689d9}.gauge span{position:relative}.lcd .service-reset{position:absolute;right:4px;bottom:4px;width:37px;min-height:36px;background:transparent}.service-shortcuts{display:grid;gap:5px}.service-shortcuts button{padding:0}
+.modal{inset:38px 0 0;background:#07173388}.dialog{position:relative;background:#294c8e;border-color:#6594d5;padding:12px 14px}.dialog h3{padding-right:31px}.dialog .dialog-actions{justify-content:flex-end}.dialog .close-dialog{position:absolute;top:4px;right:5px;padding:0 6px;min-width:31px;background:transparent}.dialog button{background:#3961a4}.dialog .access-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.access-choices button{padding:5px 3px;line-height:1.12}.access-choices span{display:block;margin-top:4px;font-size:.7rem}.pin-slots{display:flex;gap:6px;justify-content:center;margin:9px 0}.pin-slots output{width:30px;text-align:center;background:#13d3f1;color:#153563;font-weight:800}.pin-pad{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}.pin-pad button{min-height:34px;padding:0}.pin-note{font-size:.73rem;margin-top:4px;color:#e7f6ff}
+.temp-track{display:block}.gauge i{width:0}.lcd .access-choices .ico{width:21px;height:21px}.read small{overflow-wrap:anywhere}
+.weekly-head,.weekly-day{display:flex;align-items:center;gap:5px}.weekly-head{flex-wrap:wrap;margin-bottom:5px}.weekly-head button,.weekly-day button{min-width:36px}.weekly-head .selected{outline:1px solid #b3dcf1;outline-offset:-2px}.weekly-day{justify-content:space-between;background:var(--panel);padding-left:8px;margin-top:4px}.weekly-orders{padding-left:8px}.weekly-form{display:grid;gap:9px}.weekly-form label{display:grid;gap:4px}.weekly-form input,.weekly-form select{min-width:0;width:100%;font:inherit;color:inherit;background:#1c3974;border:1px solid #6594d5;border-radius:4px;padding:6px}.weekly-active{color:#afff9e}.clock-lab{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.clock-lab output{color:var(--blue);font-variant-numeric:tabular-nums}
+@media(max-width:450px){.body{grid-template-columns:38px minmax(0,1fr) 12px;gap:4px}.lcd .bar{grid-template-columns:33px minmax(0,1fr) 33px}.surface{grid-template-columns:33px minmax(0,1fr)}.home,.service-screen{grid-template-columns:minmax(0,1fr) 37px}.readings{gap:3px}.read.large{padding-right:15px}.lcd .tile .ico{width:23px;height:23px}.lcd .tiles{grid-auto-rows:minmax(82px,1fr)}.scale-labels{font-size:.43rem}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header><p class="brand">BOTTY · BANCO DE FORMACIÓN</p><h1>MK5 Touch</h1><p>Simulador del controlador táctil de compresores</p></header>
+<div class="layout">
+<div class="stack">
+<section class="card" aria-labelledby="frontTitle">
+<div class="caption"><h2 id="frontTitle">Frontal del controlador</h2><span class="pill">PANTALLA TÁCTIL</span></div>
+<div class="body" id="frontPanel">
+<div class="bezel-controls" role="group" aria-label="Pulsadores de marcha y paro">
+<button class="start" data-do="start" id="start" aria-label="Marcha" title="Marcha"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7v10" fill="none" stroke="#262a2b" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+<button class="stop" data-do="stop" id="stop" aria-label="Paro" title="Paro"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2.1"/></svg></button>
+</div>
+<div class="lcd" id="lcd" aria-label="Pantalla táctil MK5">
+<div class="bar"><button data-go="home" aria-label="Inicio" id="homeButton"></button><strong id="screenTitle">DEMO‑MK5‑001</strong><button data-do="access" aria-label="Nivel de acceso" id="accessButton"></button></div>
+<div class="surface">
+<div class="rail"><nav aria-label="Navegación del controlador" id="rail"></nav></div>
+<div class="page" id="page"></div>
+</div>
+<nav class="dots" aria-label="Pantallas principales" id="dots"></nav>
+<div class="modal" id="modal" hidden></div>
+<div class="clean" id="clean" hidden></div>
+</div>
+<div class="leds" aria-label="Indicadores del frontal">
+<span class="led alarm" id="alarmLed" title="Aviso o alarma" role="img" aria-label="Aviso o alarma"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M15 4a1.2 1.2 0 0 1 2 0l13 22a1.2 1.2 0 0 1-1 2H3a1.2 1.2 0 0 1-1-2Zm-.5 6 .5 10h2l.5-10Zm1.5 12a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg></span>
+<span class="led service" id="serviceLed" title="Servicio" role="img" aria-label="Servicio"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v-2.4a5.7 5.7 0 0 1-2-9.3v4.6l4 1.2 4-1.2V2.3a5.7 5.7 0 0 1-2 9.3V15"/><path d="M11 14h7c1.7 0 2.4.9 3.2 2l4 5v5.6l-3.1 2.6h-4.8M17 18v10.8a1.7 1.7 0 0 1-3.4 0v-1.6"/><path d="M14 16.5h-4a1.8 1.8 0 1 0 0 3.6h4m0 0H8.8a1.8 1.8 0 0 0 0 3.6H14m0 0H9.5a1.8 1.8 0 0 0 0 3.6h4.1m4-10.8c2 0 3.8 1.6 3.8 3.7v7.7"/></g></svg></span>
+<span class="led operation" id="runLed" title="Funcionamiento" role="img" aria-label="Funcionamiento"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 4.5c5.8-2.7 12.7-.3 15.5 5.5 2.4 5.1.3 11.2-4.8 13.6-4.4 2.1-9.5.2-11.6-4.2s-.2-9.5 4.2-11.6m-1 21.4c-5.7-3-7.9-10.1-4.9-15.8 2.7-5 8.8-6.9 13.8-4.2m9.3 7.1c-.5 6.4-6.1 11.2-12.5 10.6-4.3-.4-8-3.4-9.1-7.5" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+<span class="led voltage on" title="Tensión" role="img" aria-label="Tensión"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m12.5 4 9-2.2-5.4 11.6 7-2.4L18 22.5l3.5-1.1-11 9.2 4.6-12.2-6.5 1.7Z" fill="currentColor"/></svg></span>
+</div></div>
+<p class="hint">Mandos táctiles I (Marcha) y ○ (Paro) a la izquierda. Desliza a la derecha para el menú o a la izquierda para el acceso rápido.</p>
+</section>
+<section class="card practice" aria-labelledby="practiceTitle"><h2 id="practiceTitle">Prácticas guiadas</h2>
+<select id="lesson" aria-label="Elegir práctica"><option value="run">01 · Marcha, regulación y espera</option><option value="setpoint">02 · Cambiar un punto de ajuste</option><option value="fault">03 · Aviso, parada por alarma y rearme</option><option value="service">04 · Aviso y reinicio de servicio</option><option value="remote">05 · Control local y remoto</option><option value="access">06 · Nivel de acceso y clave de usuario</option><option value="weekly">07 · Programador semanal</option></select>
+<ol id="steps"></ol><button class="action" id="restart">Reiniciar práctica</button>
+</section>
+</div>
+<section class="card" aria-labelledby="benchTitle">
+<h2 id="benchTitle">Banco de pruebas</h2>
+<p class="hint">Estos mandos simulan la instalación y las causas de avería.</p>
+<div class="controls">
+<label class="control">Consumo de aire <output id="demandValue"></output><input id="demand" type="range" min="0" max="100" value="35"></label>
+<label class="control">Temperatura del elemento <output id="heatValue"></output><input id="heat" type="range" min="70" max="125" value="74"></label>
+<label class="control">Presión de red <output id="pressureValue"></output><input id="pressure" type="range" min="0" max="13" step=".1" value="8.5"></label>
+<div class="actions"><button class="action" id="auto">Presión automática</button></div>
+<div class="actions"><button class="action" id="overload" aria-pressed="false">Sobrecarga de motor</button><button class="action" id="serviceDue">Simular servicio vencido</button><button class="action" id="maintenance" disabled>Simular servicio realizado</button></div>
+<div class="actions"><button class="action" id="remoteOrder" aria-pressed="false" disabled>Orden externa de marcha</button></div>
+<div class="clock-lab"><span id="simClockLabel">Reloj de práctica</span><output id="simClock" aria-labelledby="simClockLabel"></output><button class="action" id="advanceMinute">+1 min</button><button class="action" id="advanceHour">+1 h</button></div>
+</div>
+<p class="notice" id="notice" role="status"></p>
+</section>
+</div>
+<footer>Simulación didáctica basada en el manual Touch 2924 7218 41 y en las pantallas del vídeo de referencia. Configuración VSD. Lecturas, umbrales, tiempos y PIN son valores de práctica.</footer>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const demoPin='2801';
+const days=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const weeklyOrders={run:'Marcha',stop:'Paro',point1:'Punto de ajuste 1',point2:'Punto de ajuste 2'};
+const icons = {
+  home:'<path d="m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10"/>',
+  user:'<circle cx="12" cy="6" r="3"/><path d="M6 21v-5a6 6 0 0 1 12 0v5z"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  back:'<path d="m15 5-7 7 7 7"/>',
+  data:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M5 13h4l2-5 3 8 2-4h3"/>',
+  service:'<path d="m13 11 7 7-2 2-7-7a6 6 0 0 1-8-7l4 4 3-3-4-4a6 6 0 0 1 7 8z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  history:'<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"/><circle cx="12" cy="12" r="6"/>',
+  display:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',
+  alarm:'<path d="m12 3 10 18H2zM12 9v5m0 3v.2"/>',
+  motor:'<rect x="6" y="5" width="13" height="14" rx="2"/><path d="M3 9h3m-3 6h3m13-3h3M10 5v14m5-14v14"/>',
+  sliders:'<path d="M4 6h16M4 12h16M4 18h16M8 4v4m8 2v4m-5 2v4"/>',
+  network:'<rect x="9" y="3" width="6" height="5"/><path d="M12 8v5M5 16v-3h14v3"/><rect x="2" y="16" width="6" height="5"/><rect x="16" y="16" width="6" height="5"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>',
+  check:'<path d="m5 12 4 4L19 6"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 4 3c-1 .5-1 1-1 2m0 3v.2"/>'
+};
+const icon = name => '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+icons[name]+'</svg>';
+const names = {
+  home:'Inicio',menu:'Menú',quick:'Acceso rápido',data:'Datos',state:'Estado',inputs:'Entradas',outputs:'Salidas',
+  counters:'Contadores',aux:'Equipo auxiliar',serviceMenu:'Servicio',service:'Servicio',plans:'Plan de servicio',
+  serviceHistory:'Historial de servicio',serviceFunctions:'Funciones de servicio',weekly:'Programador semanal',
+  events:'Histórico de eventos',saved:'Datos guardados',machine:'Ajustes de la máquina',alarms:'Alarmas',
+  regulation:'Regulación',control:'Parámetros de control',aravf:'Rearranque automático',
+  controller:'Ajustes del controlador',network:'Ajustes de red',location:'Localización',units:'Unidades',userKey:'Clave de usuario',
+  info:'Información',help:'Ayuda',graph:'Gráfico principal'
+};
+const parents = {data:'menu',state:'data',inputs:'data',outputs:'data',counters:'data',aux:'data',
+  serviceMenu:'menu',service:'serviceMenu',plans:'service',serviceHistory:'service',serviceFunctions:'serviceMenu',
+  weekly:'menu',events:'menu',saved:'events',machine:'menu',alarms:'machine',regulation:'machine',
+  control:'machine',aravf:'machine',controller:'menu',network:'controller',location:'controller',
+  units:'location',userKey:'controller',info:'controller',help:'controller',graph:'controller'};
+const lessons = {
+  run:['Toca Marcha. Observa cómo el compresor modula la velocidad para mantener la presión.','Baja el consumo al 0 %. Espera a que el equipo pase a espera.','Sube el consumo al 60 %. Al bajar la presión, el compresor vuelve a arrancar. Toca Paro al terminar.'],
+  setpoint:['Toca el icono de usuario. Elige Usuario avanzado y confirma con ✓. Si se solicita una clave, usa '+demoPin+', el PIN de esta práctica.','Desliza a la izquierda desde Inicio y toca Puntos de ajuste. Abre Punto de ajuste 1.','Cambia la consigna con − o + y confirma con ✓. Vuelve a Inicio, arranca y observa la presión.'],
+  fault:['Arranca y sube la temperatura del banco a 105 °C para ver el aviso. Sube a 115 °C para provocar una parada.','Toca el triángulo rojo en Inicio. Abre el mensaje. Baja la temperatura a 90 °C y toca Reiniciar.','Consulta Menú → Histórico de eventos → Datos guardados para ver los valores registrados cuando se produjo el fallo.'],
+  service:['En Inicio, toca el icono de servicio. La barra verde corresponde a las horas de funcionamiento y la azul a las horas de calendario. Pulsa Simular servicio vencido en el banco.','Pulsa Simular servicio realizado. Toca el icono circular de reinicio, introduce el PIN didáctico '+demoPin+' si se solicita y confirma el rearme del plan.','Abre Historial de servicio para comprobar el registro.'],
+  remote:['En Inicio, desliza a la izquierda. En Modo de control elige Remoto y confirma.','Prueba Marcha en el controlador. En Remoto se usa la orden externa del banco.','Activa y desactiva Orden externa de marcha. Vuelve a Local cuando termines.'],
+  access:['Desde Inicio, toca el icono de usuario. Selecciona Usuario avanzado y confirma con ✓.','Introduce '+demoPin+' en la pantalla de cuatro cifras. Es el PIN didáctico del simulador.','Abre Menú → Ajustes del controlador → Clave de usuario para consultar o cambiar la protección de la práctica.'],
+  weekly:['Reinicia la práctica y abre Menú → Programador semanal. En el lunes del Programa 1, añade Marcha a las 08:00, Punto de ajuste 2 a las 08:01, Punto de ajuste 1 a las 08:02 y Paro a las 09:00.','Activa Programa 1 y confirma con ✓. Usa +1 min en el banco hasta las 08:00. Avanza minuto a minuto y comprueba el punto activo en Ajustes de la máquina → Regulación.','Pulsa +1 h para cruzar las 09:00 y comprobar el paro. Después prueba Tiempo restante con 5 min y avanza el reloj hasta que se agote.']
+};
+const definitions = {
+  heat:{name:'Salida del elemento',warning:105,trip:115,unit:'°C'},
+  pressure:{name:'Presión de salida',warning:10.5,trip:11.5,unit:'bar'},
+  motor:{name:'Sobrecarga del motor'}
+};
+const initial = () => ({
+  page:'home',access:'basic',keyActive:true,measure:'',mode:'Local',units:'metric',demand:35,heat:74,pressure:8.5,
+  manual:false,overload:false,command:false,external:false,phase:'Parado',speed:0,phaseTime:0,
+  starts:182,runTime:1248*3600,loadTime:851*3600,clock:(7*60+55)*60,
+  weeks:[days.map(()=>[])],selectedWeek:0,activeWeek:null,timerUntil:0,
+  active:0,setpoints:[7.5,8.5],events:[],fault:null,serviceHours:1548,serviceTime:5007,
+  plan:4000,maintained:false,serviceHistory:[],clean:0,trend:[],modal:null
+});
+let s = initial();
+const notify = message => { $('notice').textContent = message; };
+const activeSetpoint = () => s.setpoints[s.active];
+const pressureUnit = () => s.units==='metric' ? 'bar' : 'psi';
+const temperatureUnit = () => s.units==='metric' ? '°C' : '°F';
+const pressureNumber = (value=s.pressure) => s.units==='metric' ? value.toFixed(1) : (value*14.5038).toFixed(1);
+const pressureText = value => pressureNumber(value)+' '+pressureUnit();
+const tempNumber = (value=s.heat) => String(s.units==='metric' ? value : Math.round(value*1.8+32));
+const tempText = value => tempNumber(value)+' '+temperatureUnit();
+const faultCause = () => s.overload ? 'motor' : s.heat>=definitions.heat.trip ? 'heat' : s.pressure>=definitions.pressure.trip ? 'pressure' : null;
+const warningCause = () => s.heat>=definitions.heat.warning ? 'heat' : s.pressure>=definitions.pressure.warning ? 'pressure' : null;
+const warningActive = () => !s.fault && Boolean(warningCause());
+const alarmState = () => s.fault ? 'trip-'+s.fault.key : warningCause();
+const due = () => s.serviceHours<=0 || s.serviceTime<=0;
+const hours = value => Math.max(0,Math.floor(value)).toLocaleString('es-ES');
+function phase(value) {
+  if(s.phase===value) return;
+  s.phase=value;
+  s.phaseTime=0;
+  if(value==='Arrancando') s.starts++;
+}
+function snapshot(key) {
+  return {key,date:new Date(),pressure:s.pressure,heat:s.heat,phase:s.phase,starts:s.starts};
+}
+function checkFault() {
+  const cause=faultCause();
+  if(!cause || s.fault) return;
+  s.fault=snapshot(cause);
+  s.events.unshift(s.fault);
+  s.command=false;
+  s.timerUntil=0;
+  s.speed=0;
+  phase('Parada por alarma');
+  notify('Parada por alarma. Consulta Estado y corrige la causa simulada antes de rearmar.');
+}
+function command(on) {
+  if(!on) s.timerUntil=0;
+  if(on && (s.fault || faultCause())) {
+    notify('Marcha bloqueada por alarma. Corrige la causa y rearma.');
+    return;
+  }
+  if(s.command===on) return;
+  s.command=on;
+  if(!on) {
+    s.speed=0;
+    phase(s.fault?'Parada por alarma':'Parado');
+    return;
+  }
+  phase(s.pressure>activeSetpoint()+.25?'En espera':'Arrancando');
+}
+const timeLabel = minute => [Math.floor(minute/60),minute%60].map(value=>String(value).padStart(2,'0')).join(':');
+function advanceClock(seconds) {
+  const end=s.clock+seconds;
+  const expire=until=>{
+    if(s.timerUntil && s.timerUntil<=until) {
+      command(false);
+      notify('Tiempo restante agotado. Orden de paro ejecutada.');
+    }
+  };
+  const program=s.weeks[s.activeWeek];
+  if(program && s.mode==='Local') {
+    for(let minute=Math.floor(s.clock/60)+1;minute*60<=end;minute++) {
+      expire(minute*60);
+      const day=Math.floor(minute/1440)%7;
+      const order=program[day].find(item=>item.minute===minute%1440);
+      if(!order) continue;
+      if(order.type==='point1' || order.type==='point2') s.active=order.type==='point1'?0:1;
+      else command(order.type==='run');
+      if(order.type!=='run' || s.command) notify('Programa '+(s.activeWeek+1)+' · '+days[day]+' '+timeLabel(order.minute)+' · '+weeklyOrders[order.type]+'.');
+    }
+  }
+  expire(end);
+  s.clock=end;
+}
+function tick(dt) {
+  s.phaseTime+=dt;
+  s.clean=Math.max(0,s.clean-dt);
+  const consumption=s.demand*.007;
+  if(!s.manual) s.pressure=Math.max(0,s.pressure-consumption*dt);
+  checkFault();
+  advanceClock(dt);
+  if(s.command && !s.fault) {
+    if(s.phase==='En espera' && s.pressure<activeSetpoint()-.25) phase('Arrancando');
+    if(s.phase==='Arrancando' && s.phaseTime>=1.5) phase('En carga');
+    if(s.phase==='En descarga') {
+      if(s.pressure<activeSetpoint()-.15) phase('En carga');
+      else if(s.phaseTime>=5) phase('En espera');
+    }
+    if(s.phase==='En carga') {
+      const target=Math.max(20,Math.min(100,(consumption+(activeSetpoint()-s.pressure)*.8)*100/.9));
+      s.speed+=(target-s.speed)*Math.min(1,dt*2);
+      if(!s.manual) s.pressure+=.9*s.speed/100*dt;
+      if(s.pressure>=activeSetpoint()+.25 && s.speed<28) phase('En descarga');
+      s.loadTime+=dt;
+    }
+    if(s.phase!=='En carga') s.speed=s.phase==='En descarga'?20:0;
+    if(['Arrancando','En carga','En descarga'].includes(s.phase)) {
+      s.runTime+=dt;
+      s.serviceHours=Math.max(0,s.serviceHours-dt/3600);
+    }
+    checkFault();
+  }
+  s.serviceTime=Math.max(0,s.serviceTime-dt/3600);
+  s.trend.push(s.pressure);
+  if(s.trend.length>80) s.trend.shift();
+}
+const mainPages=['menu','home','quick'];
+const modes=['Local','Remoto','LAN'];
+const tile = (label,symbol,attr) => '<button class="tile" '+attr+'>'+icon(symbol)+'<span>'+label+'</span></button>';
+const goTile = (target,symbol,label=names[target]) => tile(label,symbol,'data-go="'+target+'"');
+const actionTile = (label,symbol,action) => tile(label,symbol,'data-do="'+action+'"');
+const tiles = (...items) => '<div class="tiles">'+items.join('')+'</div>';
+const row = (label,value='',attr='') => attr
+  ? '<button class="row" '+attr+'><span>'+label+'</span><span>'+value+' ›</span></button>'
+  : '<div class="row"><span>'+label+'</span><b>'+value+'</b></div>';
+const rows = (...items) => '<div class="rows">'+items.join('')+'</div>';
+const goRow = (target,value='') => row(names[target],value,'data-go="'+target+'"');
+const actionRow = (label,value,action) => row(label,value,'data-do="'+action+'"');
+const live = key => '<span data-live="'+key+'"></span>';
+const tip = value => '<p class="line-info">'+value+'</p>';
+const accessLabel = value => value==='advanced'?'Usuario avanzado':'Usuario básico';
+function homeView() {
+  return '<div class="home"><div class="readings">'+
+    '<button class="read large" data-measure="Salida del compresor"><small>⇔ Salida del compresor</small><b>'+live('pressure')+' <span>'+pressureUnit()+'</span></b><span class="meter" aria-hidden="true"><i id="pressureMeter"></i></span></button>'+
+    '<button class="read read-speed" data-measure="Velocidad"><small>Velocidad</small><b>'+live('speed')+' <span>%</span></b><span class="speed-scale" aria-hidden="true">'+ '<i></i>'.repeat(5) +'</span><span class="scale-labels" aria-hidden="true"><span>20</span><span>40</span><span>60</span><span>80</span></span></button>'+
+    '<button class="read" data-measure="Salida del elemento"><small>Salida del elemento</small><b>'+live('heat')+' <span>'+temperatureUnit()+'</span></b><span class="temp-track" aria-hidden="true"><i id="heatMeter"></i></span></button>'+
+    '<button class="read" data-measure="Aire ambiente"><small>Aire ambiente</small><b>'+live('ambient')+' <span>'+temperatureUnit()+'</span></b></button></div><div class="shortcuts">'+
+    '<button data-go="state" id="alarmShortcut" aria-label="Alarmas actuales">'+icon('alarm')+'</button>'+
+    '<button data-go="service" id="serviceShortcut" aria-label="Información de servicio">'+icon('service')+'</button>'+
+    '<button data-go="state" id="stateShortcut" aria-label="Estado de la unidad">'+icon('motor')+'</button></div></div>';
+}
+function serviceView() {
+  const gauge=(label,key,max,style,symbol)=>'<div class="service-gauge" aria-label="'+label+'"><b>A</b><span class="gauge '+style+'"><i id="'+key+'Bar" aria-hidden="true"></i><span>'+live(key)+' / '+max+' h</span></span><span class="'+(style==='calendar'?'cyan':'green')+'">'+icon(symbol)+'</span></div>';
+  const button=(label,symbol,attr)=>'<button aria-label="'+label+'" title="'+label+'" '+attr+'>'+icon(symbol)+'</button>';
+  return '<div class="service-screen"><div class="service-gauges">'+
+    gauge('Horas de funcionamiento restantes','serviceHours',s.plan,'','motor')+
+    gauge('Horas de calendario restantes','serviceTime',8760,'calendar','clock')+
+    '<button class="service-reset" data-do="serviceReset" aria-label="Reiniciar Plan A" title="Reiniciar Plan A">⟲</button></div><div class="service-shortcuts">'+
+    button('Vista general','service','data-do="serviceOverview"')+button('Plan de servicio','history','data-go="plans"')+
+    button('Historial de servicio','clock','data-go="serviceHistory"')+'</div></div>';
+}
+function weeklyView() {
+  const program=s.weeks[s.selectedWeek];
+  const buttons=s.weeks.map((_,i)=>'<button data-do="weekly-select-'+i+'" aria-label="Programa '+(i+1)+'" aria-pressed="'+(i===s.selectedWeek)+'" class="'+(i===s.selectedWeek?'selected':'')+'">'+(i+1)+'</button>').join('');
+  const active=s.activeWeek===null?'Desactivado':'Programa '+(s.activeWeek+1);
+  return '<div class="weekly-head">'+buttons+
+    '<button data-do="weekly-add" aria-label="Añadir programa"'+(s.weeks.length>=4?' disabled':'')+'>+</button>'+
+    '<button data-do="weekly-remove" aria-label="Eliminar programa"'+(!s.weeks.length?' disabled':'')+'>−</button></div>'+
+    rows(actionRow('Programa activo',active,'weekly-active'),actionRow('Tiempo restante',live('remaining'),'weekly-time'))+
+    (program?program.map((orders,day)=>'<div class="weekly-day"><b>'+days[day]+'</b><button data-do="weekly-edit-'+day+'" aria-label="Añadir orden del '+days[day].toLowerCase()+'"'+(orders.length>=8?' disabled':'')+'>+</button></div>'+
+      '<div class="weekly-orders">'+rows(...orders.map((order,i)=>actionRow(weeklyOrders[order.type],timeLabel(order.minute),'weekly-edit-'+day+'-'+i)))+'</div>').join(''):
+      tip('Añade un programa con +.'));
+}
+function pages() {
+  const alarm=s.fault?.key??warningCause();
+  switch(s.page) {
+    case 'home': return homeView();
+    case 'menu': return tiles(goTile('data','data'),goTile('serviceMenu','service'),goTile('weekly','clock'),
+      goTile('events','history'),goTile('machine','settings'),goTile('controller','display'));
+    case 'quick': return tiles(goTile('regulation','sliders','Puntos de ajuste'),actionTile('Modo de control · '+s.mode,'network','mode'),
+      goTile('location','globe'),goTile('weekly','clock'),goTile('aravf','motor'),goTile('state','alarm'));
+    case 'data': return tiles(goTile('state','alarm'),goTile('inputs','data'),goTile('outputs','motor'),
+      goTile('counters','clock'),goTile('aux','display'));
+    case 'state': return rows(row('Estado de la unidad',live('phase')),row('Modo de control',s.mode),
+      alarm?actionRow((s.fault?'Parada · ':'Aviso · ')+definitions[alarm].name,'Ver detalle','faultDetail'):row('Alarmas actuales','✓ Sin alarmas'));
+    case 'inputs': return rows(row('Presión de salida',live('pressureWithUnit')),row('Temperatura del elemento',live('heatWithUnit')),
+      row('Temperatura ambiente',tempText(26)),row('Orden digital remota',s.mode==='Remoto' && s.external?'Activa':'Inactiva'));
+    case 'outputs': return rows(row('Motor de accionamiento',live('motor')),row('Referencia de velocidad',live('speed')+' %'));
+    case 'counters': return rows(row('Horas de funcionamiento',live('runHours')+' h'),row('Horas en carga',live('loadHours')+' h'),
+      row('Arranques del motor',live('starts')));
+    case 'aux': return rows(row('Convertidor de frecuencia','Simulado'));
+    case 'serviceMenu': return tiles(goTile('service','service'),...(s.access==='advanced'?[goTile('serviceFunctions','settings')]:[]),
+      actionTile('Limpiar pantalla','display','clean'));
+    case 'service': return serviceView();
+    case 'plans': return rows(actionRow('Plan A · horas de funcionamiento',s.plan+' h','plan'));
+    case 'serviceHistory': return s.serviceHistory.length?rows(...s.serviceHistory.map(date=>row('Plan A reiniciado',date.toLocaleString('es-ES')))):tip('Todavía no hay intervenciones registradas.');
+    case 'serviceFunctions': return tip('Las funciones dependen de la configuración de la máquina y pueden requerir acceso de servicio.');
+    case 'weekly': return weeklyView();
+    case 'events': return tiles(goTile('saved','history'));
+    case 'saved': return s.events.length?rows(...s.events.map((entry,i)=>actionRow(definitions[entry.key].name,entry.date.toLocaleTimeString('es-ES'),'event-'+i))):tip('Todavía no hay paradas registradas.');
+    case 'machine': return tiles(goTile('alarms','alarm'),goTile('regulation','sliders'),goTile('control','settings'),
+      goTile('aux','display','Equipo auxiliar'),goTile('aravf','motor'));
+    case 'alarms': return rows(...Object.entries(definitions).map(([key,entry])=>actionRow(entry.name,key==='heat'?live('heatWithUnit'):key==='pressure'?live('pressureWithUnit'):'', 'alarm-'+key)));
+    case 'regulation': return rows(actionRow('Punto de ajuste utilizado',live('setpoint'),'active'),
+      ...s.setpoints.map((value,i)=>actionRow('Punto de ajuste '+(i+1),pressureText(value),'setpoint-'+i)),
+      row('Control de capacidad','Velocidad variable'));
+    case 'control': return rows(actionRow('Modo de control',s.mode,'mode'),row('Control de capacidad','Velocidad variable'));
+    case 'aravf': return rows(row('Rearranque tras fallo eléctrico','Desactivado'),tip('La activación está reservada al personal de servicio.'));
+    case 'controller': return tiles(goTile('network','network'),goTile('location','globe'),goTile('userKey','user'),goTile('help','help'),
+      goTile('info','display'),goTile('graph','data'));
+    case 'network': return rows(row('Ethernet','Simulado'),row('CAN','Simulado'));
+    case 'location': return rows(row('Idioma','Español'),goRow('units',s.units==='metric'?'Métricas':'Imperiales'));
+    case 'userKey': return rows(actionRow('Clave de usuario',s.keyActive?'Activa':'Inactiva','toggleKey'));
+    case 'units': return rows(actionRow('Unidades de presión y temperatura',s.units==='metric'?'bar / °C':'psi / °F','units'));
+    case 'help': return tip('Usa Inicio para volver a las lecturas, Menú para navegar y el icono de usuario para cambiar el nivel de acceso.');
+    case 'info': return rows(row('Controlador','MK5 Touch'),row('Número de serie','DEMO‑MK5‑001'),row('Configuración','VSD didáctico'));
+    case 'graph': return '<div class="rows">'+row('Presión de salida',live('pressureWithUnit'))+'</div><svg class="trend" viewBox="0 0 160 50" preserveAspectRatio="none" role="img" aria-label="Tendencia de la presión"><path d="M0 10h160M0 25h160M0 40h160"/><polyline id="trace"/></svg>';
+    default: return '';
+  }
+}
+function title() {
+  return s.page==='home' || s.page==='quick'
+    ? s.measure || (s.access==='advanced'?s.phase:'DEMO‑MK5‑001')
+    : names[s.page];
+}
+function renderPage() {
+  $('screenTitle').textContent=title();
+  $('rail').innerHTML='<button data-go="menu" aria-label="Menú">'+icon('menu')+'</button>'+
+    (parents[s.page]?'<button data-go="'+parents[s.page]+'" aria-label="Volver">'+icon('back')+'</button>':'');
+  $('dots').innerHTML=mainPages.map(target=>'<button class="dot" data-go="'+target+'" aria-label="'+names[target]+
+    '" aria-current="'+String(target===s.page)+'">'+(target===s.page?'●':'○')+'</button>').join('');
+  $('page').innerHTML=pages();
+  $('page').scrollTop=0;
+  update();
+}
+function update() {
+  $('screenTitle').textContent=title();
+  const motor=['Arrancando','En carga','En descarga'].includes(s.phase);
+  const values={pressure:pressureNumber(),speed:String(Math.round(s.speed)),heat:tempNumber(),ambient:tempNumber(26),
+    pressureWithUnit:pressureText(),heatWithUnit:tempText(),phase:s.phase,motor:motor?'En marcha':'Parado',
+    starts:String(s.starts),runHours:hours(s.runTime/3600),loadHours:hours(s.loadTime/3600),
+    serviceHours:hours(s.serviceHours),serviceTime:hours(s.serviceTime),
+    remaining:s.timerUntil?Math.ceil((s.timerUntil-s.clock)/60)+' min':'Desactivado',setpoint:String(s.active+1)};
+  for(const node of $('page').querySelectorAll('[data-live]')) node.textContent=values[node.dataset.live];
+  const meter=(id,value,dimension='width')=>{
+    const bar=$('page').querySelector('#'+id);
+    if(bar) bar.style[dimension]=Math.max(0,Math.min(100,value))+'%';
+  };
+  meter('pressureMeter',s.pressure/13*100,'height');
+  meter('heatMeter',s.heat/125*100);
+  meter('serviceHoursBar',s.serviceHours/s.plan*100);
+  meter('serviceTimeBar',s.serviceTime/8760*100);
+  $('page').querySelectorAll('.speed-scale i').forEach((segment,i)=>segment.classList.toggle('on',s.speed>i*20));
+  $('alarmLed').classList.toggle('on',Boolean(s.fault)||warningActive());
+  $('alarmLed').classList.toggle('blink',Boolean(s.fault));
+  $('serviceLed').classList.toggle('on',due());
+  $('runLed').classList.toggle('on',s.command);
+  $('alarmShortcut')?.classList.toggle('on',Boolean(s.fault)||warningActive());
+  $('alarmShortcut')?.classList.toggle('inactive',!s.fault&&!warningActive());
+  $('serviceShortcut')?.classList.toggle('service-on',due());
+  $('serviceShortcut')?.classList.toggle('inactive',!due());
+  $('stateShortcut')?.setAttribute('title',s.phase);
+  $('stateShortcut')?.classList.toggle('weekly-active',s.activeWeek!==null);
+  const minute=Math.floor(s.clock/60);
+  $('simClock').textContent=days[Math.floor(minute/1440)%7]+' · '+timeLabel(minute%1440);
+  $('start').disabled=s.mode!=='Local' || Boolean(s.fault);
+  $('stop').disabled=s.mode!=='Local';
+  $('demandValue').textContent=s.demand+' %';
+  $('heatValue').textContent=s.heat+' °C';
+  $('pressureValue').textContent=s.pressure.toFixed(1)+' bar · '+(s.manual?'manual':'automática');
+  if(!s.manual) $('pressure').value=s.pressure.toFixed(1);
+  $('auto').disabled=!s.manual;
+  $('overload').setAttribute('aria-pressed',String(s.overload));
+  $('maintenance').disabled=!due() || s.maintained;
+  $('remoteOrder').disabled=s.mode==='Local';
+  $('remoteOrder').setAttribute('aria-pressed',String(s.external));
+  $('remoteOrder').textContent=s.external?'Retirar orden externa':'Orden externa de marcha';
+  $('clean').hidden=s.clean<=0;
+  $('clean').textContent=s.clean>0?'Limpieza de pantalla · '+Math.ceil(s.clean)+' s':'';
+  $('trace')?.setAttribute('points',s.trend.map((value,i)=>(i*2)+','+(49-Math.min(13,value)/13*48).toFixed(1)).join(' '));
+}
+function navigate(target) {
+  if(s.clean>0) return;
+  s.page=target;
+  s.measure='';
+  renderPage();
+}
+function dialog(config) {
+  s.modal=config;
+  renderDialog();
+  $('modal').querySelector('button')?.focus();
+}
+function renderDialog() {
+  const m=s.modal;
+  $('modal').hidden=!m;
+  if(!m) {
+    $('modal').replaceChildren();
+    return;
+  }
+  let body=m.content??'';
+  if(m.choices) body='<div class="choices'+(m.access?' access-choices':'')+'">'+m.choices.map(({value,label,disabled})=>
+    '<button class="'+(value===m.value?'selected':'')+'" data-choice="'+value+'"'+(disabled?' disabled':'')+'>'+ (m.access?icon('user')+'<span>'+label+'</span>':label)+'</button>').join('')+'</div>';
+  if(m.step) body='<div class="stepper"><button data-dialog="minus" aria-label="Reducir">−</button><output>'+
+    m.format(m.value)+'</output><button data-dialog="plus" aria-label="Aumentar">+</button></div>';
+  if(m.pin) body='<div class="pin-slots" aria-label="'+m.value.length+' cifras introducidas">'+
+    Array.from({length:4},(_,i)=>'<output>'+(i<m.value.length?'●':'–')+'</output>').join('')+'</div>'+
+    '<div class="pin-pad">'+Array.from('1234567890',digit=>'<button data-digit="'+digit+'">'+digit+'</button>').join('')+
+    '<button data-dialog="delete" aria-label="Borrar última cifra">⌫</button></div><p class="pin-note">'+(m.error??'PIN de práctica: '+demoPin)+'</p>';
+  $('modal').innerHTML='<section class="dialog" role="dialog" aria-modal="true" aria-label="'+m.title+'"><h3>'+m.title+'</h3>'+body+
+    '<button class="close-dialog" data-dialog="close" aria-label="Cerrar">✕</button><div class="dialog-actions">'+
+    (m.remove?'<button data-dialog="remove">Eliminar orden</button>':'')+
+    (m.accept?'<button data-dialog="accept" aria-label="'+(m.confirmLabel??'Confirmar')+'">'+(m.confirmLabel??'✓')+'</button>':'')+
+    '</div></section>';
+}
+function advanced() {
+  if(s.access==='advanced') return true;
+  dialog({title:'Nivel de acceso',content:tip('Selecciona Usuario avanzado desde el icono de usuario para modificar este ajuste.')});
+  return false;
+}
+const choices = (title,value,options,accept) => dialog({title,value,choices:options,accept});
+const numeric = (title,value,min,max,step,format,accept) => dialog({title,value,min,max,step,format,accept});
+function askPin(accept) {
+  dialog({title:'Nivel de acceso',pin:true,value:'',accept(value){
+    if(value!==demoPin) {
+      s.modal.value='';
+      s.modal.error='PIN incorrecto. Usa '+demoPin+' para la práctica.';
+      renderDialog();
+      $('modal').querySelector('[data-digit]')?.focus();
+      return false;
+    }
+    accept();
+  }});
+}
+function editOrder(day,index) {
+  const orders=s.weeks[s.selectedWeek][day];
+  const current=orders[index];
+  if(!current && orders.length>=8) return;
+  dialog({title:(current?'Editar orden · ':'Añadir orden · ')+days[day],
+    content:'<div class="weekly-form"><label>Hora <input id="orderTime" type="time" required value="'+timeLabel(current?.minute??480)+'"></label>'+
+      '<label>Orden <select id="orderType">'+Object.entries(weeklyOrders).map(([type,label])=>
+        '<option value="'+type+'"'+(current?.type===type?' selected':'')+'>'+label+'</option>').join('')+'</select></label>'+
+      '<p id="orderError" role="status"></p></div>',
+    remove:current?()=>orders.splice(index,1):null,
+    accept(){
+      const value=$('orderTime').value;
+      if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) {
+        $('orderError').textContent='Introduce una hora válida.';
+        return false;
+      }
+      const [hour,minutes]=value.split(':').map(Number);
+      const minute=hour*60+minutes;
+      if(orders.some((order,i)=>i!==index && order.minute===minute)) {
+        $('orderError').textContent='Ya hay una orden a esa hora.';
+        return false;
+      }
+      const order={minute,type:$('orderType').value};
+      if(current) orders[index]=order;
+      else orders.push(order);
+      orders.sort((a,b)=>a.minute-b.minute);
+    }});
+}
+function weeklyAction(key) {
+  const [,operation,day,index]=key.split('-');
+  if(operation==='select') {
+    s.selectedWeek=Number(day);
+    renderPage();
+  } else if(operation==='add' && s.weeks.length<4) {
+    s.weeks.push(days.map(()=>[]));
+    s.selectedWeek=s.weeks.length-1;
+    renderPage();
+  } else if(operation==='remove' && s.weeks.length) {
+    const selected=s.selectedWeek;
+    dialog({title:'Eliminar programa '+(selected+1),content:tip('Confirma para borrar sus órdenes semanales.'),accept(){
+      s.weeks.splice(selected,1);
+      if(s.activeWeek===selected) s.activeWeek=null;
+      else if(s.activeWeek!==null && s.activeWeek>selected) s.activeWeek--;
+      s.selectedWeek=Math.max(0,Math.min(selected,s.weeks.length-1));
+    }});
+  } else if(operation==='active') {
+    numeric('Programa activo',s.activeWeek===null?0:s.activeWeek+1,0,s.weeks.length,1,
+      value=>value?'Programa '+value:'Desactivado',value=>{s.activeWeek=value?value-1:null;});
+  } else if(operation==='time') {
+    numeric('Tiempo restante',Math.max(5,Math.ceil((s.timerUntil-s.clock)/300)*5),0,240,5,
+      value=>value?value+' min':'Desactivado',value=>{
+        if(!value) {s.timerUntil=0;return;}
+        if(s.mode!=='Local') return notify('Selecciona Local para usar el tiempo restante en esta práctica.');
+        command(true);
+        if(s.command) s.timerUntil=s.clock+value*60;
+      });
+  } else if(operation==='edit' && s.weeks[s.selectedWeek]) {
+    editOrder(Number(day),index===undefined?undefined:Number(index));
+  }
+}
+function details(entry,historical) {
+  const def=definitions[entry.key];
+  dialog({title:def.name,content:rows(row('Estado',entry.phase),row('Presión de salida',pressureText(entry.pressure)),
+    row('Salida del elemento',tempText(entry.heat)),row('Arranques del motor',String(entry.starts)))+
+    (historical?tip(entry.date.toLocaleString('es-ES')):s.fault?tip('Corrige la causa en el banco y después toca Reiniciar.'):''),
+    confirmLabel:!historical && s.fault?'Reiniciar':undefined,
+    accept:!historical && s.fault?()=>{
+      if(faultCause()) return notify('La causa sigue activa. Corrígela antes de rearmar.');
+      s.fault=null;
+      phase('Parado');
+      notify('Alarma rearmada. El equipo queda parado.');
+    }:null});
+}
+function action(key) {
+  if(key.startsWith('weekly-')) {
+    weeklyAction(key);
+  } else if(key==='start' || key==='stop') {
+    if(s.mode!=='Local') return;
+    command(key==='start');
+    if(!s.fault) notify(key==='start'?'Marcha habilitada en modo local.':'Paro local.');
+  } else if(key==='access') {
+    dialog({title:'Nivel de acceso',value:s.access,access:true,choices:[{value:'basic',label:'Usuario básico'},
+      {value:'advanced',label:'Usuario avanzado'},{value:'service',label:'Usuario de servicio',disabled:true}],accept(value){
+      const select=()=>{s.access=value;notify(accessLabel(value)+'.');};
+      if(s.keyActive && value==='advanced' && s.access!=='advanced') askPin(select);
+      else select();
+    }});
+  } else if(key==='mode') {
+    choices('Modo de control',s.mode,modes.map(value=>({value,label:value})),value=>{
+      if(value===s.mode) return;
+      command(false);
+      s.external=false;
+      s.mode=value;
+      notify('Control '+value.toLowerCase()+'.');
+    });
+  } else if(key==='active') {
+    if(advanced()) choices('Punto de ajuste utilizado',String(s.active),s.setpoints.map((value,i)=>({
+      value:String(i),label:'Punto '+(i+1)+' · '+pressureText(value)})),value=>{s.active=Number(value);});
+  } else if(key.startsWith('setpoint-')) {
+    if(!advanced()) return;
+    const i=Number(key.at(-1));
+    numeric('Punto de ajuste '+(i+1),s.setpoints[i],5,10,.1,pressureText,value=>{s.setpoints[i]=value;notify('Consigna guardada.');});
+  } else if(key==='units') {
+    choices('Unidades',s.units,[{value:'metric',label:'bar / °C'},{value:'imperial',label:'psi / °F'}],value=>{s.units=value;});
+  } else if(key==='toggleKey') {
+    if(advanced()) askPin(()=>{s.keyActive=!s.keyActive;notify('Clave de usuario '+(s.keyActive?'activada.':'desactivada.'));});
+  } else if(key==='clean') {
+    s.clean=15;
+  } else if(key==='faultDetail') {
+    const current=s.fault??(warningCause()?snapshot(warningCause()):null);
+    if(current) details(current,false);
+  } else if(key.startsWith('alarm-')) {
+    const entry=definitions[key.slice(6)];
+    const fmt=entry.unit==='°C'?tempText:pressureText;
+    dialog({title:entry.name,content:entry.unit?rows(row('Nivel de aviso',fmt(entry.warning)),row('Nivel de parada',fmt(entry.trip))):
+      tip('La parada se activa con la señal simulada de protección del motor.')});
+  } else if(key.startsWith('event-')) {
+    details(s.events[Number(key.slice(6))],true);
+  } else if(key==='plan') {
+    if(advanced()) numeric('Plan A · horas',s.plan,500,8000,500,value=>value+' h',value=>{s.plan=value;});
+  } else if(key==='serviceOverview') {
+    dialog({title:'Vista general de servicio',content:rows(row('Plan de servicio','A'),
+      row('Funcionamiento restante',hours(s.serviceHours)+' h'),row('Calendario restante',hours(s.serviceTime)+' h'),
+      row('Estado',due()?'Servicio vencido':'Dentro del intervalo'))});
+  } else if(key==='serviceReset') {
+    if(!due()) return notify('El Plan A sigue dentro del intervalo. Puedes simular su vencimiento en el banco.');
+    if(!s.maintained) return notify('Marca el servicio como realizado en el banco antes de reiniciar.');
+    const confirm=()=>dialog({title:'Reiniciar Plan A',content:tip('Confirma que has realizado el mantenimiento simulado.'),accept:()=>{
+      if(!due() || !s.maintained) return;
+      s.serviceHours=s.plan;
+      s.serviceTime=8760;
+      s.maintained=false;
+      s.serviceHistory.unshift(new Date());
+      notify('Plan A reiniciado. Revisa el historial de servicio.');
+    }});
+    if(s.keyActive && s.access!=='advanced') askPin(confirm);
+    else confirm();
+  }
+  update();
+}
+$('frontPanel').addEventListener('click',event=>{
+  if(s.clean>0) return;
+  const button=event.target.closest('button');
+  if(!button) return;
+  const data=button.dataset;
+  if(s.modal) {
+    if(data.digit!==undefined || data.dialog==='delete') {
+      const m=s.modal;
+      m.value=data.dialog==='delete'?m.value.slice(0,-1):(m.value+data.digit).slice(0,4);
+      m.error=null;
+      renderDialog();
+      $('modal').querySelector(data.digit===undefined?'[data-dialog="delete"]':'[data-digit="'+data.digit+'"]')?.focus();
+    } else if(data.choice!==undefined) {
+      s.modal.value=data.choice;
+      renderDialog();
+      $('modal').querySelector('.selected')?.focus();
+    } else if(data.dialog==='plus'||data.dialog==='minus') {
+      const m=s.modal;
+      m.value=Math.max(m.min,Math.min(m.max,Math.round((m.value+(data.dialog==='plus'?1:-1)*m.step)*100)/100));
+      renderDialog();
+      $('modal').querySelector('[data-dialog="'+data.dialog+'"]')?.focus();
+    } else if(['accept','close','remove'].includes(data.dialog)) {
+      const m=s.modal;
+      const scroll=$('page').scrollTop;
+      if(data.dialog==='accept' && (m.accept(m.value)===false || s.modal!==m)) return;
+      if(data.dialog==='remove') m.remove();
+      s.modal=null;
+      renderDialog();
+      renderPage();
+      if(s.page==='weekly') $('page').scrollTop=scroll;
+      else $('accessButton').focus();
+    }
+    return;
+  }
+  if(data.go) navigate(data.go);
+  if(data.do) action(data.do);
+  if(data.measure) { s.measure=data.measure;update(); }
+});
+let finger=null;
+$('lcd').addEventListener('touchstart',event=>{
+  finger=event.touches.length===1 && !s.modal && s.clean<=0 && mainPages.includes(s.page)
+    ? {x:event.touches[0].clientX,y:event.touches[0].clientY}:null;
+},{passive:true});
+$('lcd').addEventListener('touchcancel',()=>{finger=null;},{passive:true});
+$('lcd').addEventListener('touchend',event=>{
+  if(!finger) return;
+  const {clientX,clientY}=event.changedTouches[0];
+  const dx=clientX-finger.x,dy=clientY-finger.y;
+  finger=null;
+  if(Math.abs(dx)<38 || Math.abs(dx)<Math.abs(dy)*1.5) return;
+  const target=mainPages[mainPages.indexOf(s.page)+(dx<0?1:-1)];
+  if(target) {
+    event.preventDefault();
+    navigate(target);
+  }
+},{passive:false});
+function refreshAfterChange(change) {
+  const previous=alarmState();
+  change();
+  checkFault();
+  if(s.page==='state' && previous!==alarmState()) renderPage();
+  else update();
+}
+$('demand').oninput=event=>{s.demand=Number(event.target.value);update();};
+$('advanceMinute').onclick=()=>{advanceClock(60);update();};
+$('advanceHour').onclick=()=>{advanceClock(3600);update();};
+$('heat').oninput=event=>refreshAfterChange(()=>{s.heat=Number(event.target.value);});
+$('pressure').oninput=event=>refreshAfterChange(()=>{s.manual=true;s.pressure=Number(event.target.value);});
+$('auto').onclick=()=>{s.manual=false;update();};
+$('overload').onclick=()=>refreshAfterChange(()=>{s.overload=!s.overload;});
+$('serviceDue').onclick=()=>{
+  s.serviceHours=0;
+  s.maintained=false;
+  notify('Plan A vencido. Consulta Servicio.');
+  renderPage();
+};
+$('maintenance').onclick=()=>{
+  s.maintained=true;
+  notify('Mantenimiento simulado realizado. Reinicia el Plan A desde Servicio.');
+  update();
+};
+$('remoteOrder').onclick=()=>{
+  if(s.mode==='Local') return;
+  s.external=!s.external;
+  command(s.external);
+  if(!s.fault) notify(s.external?'Orden externa de marcha activa.':'Orden externa retirada.');
+  if(s.page==='inputs') renderPage();
+  else update();
+};
+function showLesson() {
+  $('steps').replaceChildren(...lessons[$('lesson').value].map(text=>{
+    const item=document.createElement('li');
+    item.textContent=text;
+    return item;
+  }));
+}
+$('lesson').onchange=showLesson;
+$('restart').onclick=()=>{
+  s=initial();
+  $('demand').value=s.demand;
+  $('heat').value=s.heat;
+  renderDialog();
+  renderPage();
+  notify('Banco reiniciado. Empieza desde Inicio.');
+};
+$('homeButton').innerHTML=icon('home');
+$('accessButton').innerHTML=icon('user');
+showLesson();
+renderPage();
+notify('Listo. Toca Marcha o explora el menú del controlador.');
+let lastTick=performance.now();
+setInterval(()=>{
+  const now=performance.now();
+  const previousAlarm=alarmState();
+  const previousDue=due();
+  tick(Math.min(.75,(now-lastTick)/1000));
+  lastTick=now;
+  if((s.page==='state' && previousAlarm!==alarmState()) ||
+     (s.page==='service' && previousDue!==due())) renderPage();
+  else update();
+},250);
+</script>
+</body>
+</html>
