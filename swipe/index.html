@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BOTTY · Simulador Swipe</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111923;color:#eaf2f8;font:16px/1.5 system-ui,sans-serif}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #75d7ff;outline-offset:3px}button:disabled{opacity:.35;cursor:default}h1,h2,p{margin:0}h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.15}h2{font-size:1.1rem}main{max-width:1170px;margin:auto;padding:clamp(14px,4vw,40px)}.brand{letter-spacing:.15em;color:#7bd6f8;font-weight:750;font-size:.75rem}header>p:last-child{color:#b8c9d5;margin-top:8px}.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:20px;margin-top:24px;align-items:start}.stack{display:grid;gap:16px}.card{padding:17px;border:1px solid #344451;background:#1b2733;border-radius:14px}.caption{display:flex;justify-content:space-between;gap:9px;align-items:center}.badge{font-size:.7rem;color:#8ed6f4;border:1px solid #426074;border-radius:18px;padding:3px 10px}.front{width:min(100%,335px);margin:18px auto;background:linear-gradient(130deg,#212325,#050607 40%,#17191b);border:2px solid #363a3e;border-radius:24px 24px 34px 34px;padding:28px 12px 29px;box-shadow:inset 2px 2px 8px #62666b66,0 12px 30px #0008}.leds{display:flex;justify-content:center;gap:22px;align-items:center;height:27px;margin-bottom:12px}.led{color:#343b40}.led svg{width:19px;height:19px;display:block}.led.on{filter:drop-shadow(0 0 3px currentColor)}.red.on{color:#ff5550}.blue.on{color:#49baff}.green.on{color:#68f49e}.orange.on{color:#ff992d}.blink{animation:blink 1s step-end infinite}@keyframes blink{50%{opacity:.35}}.home{display:block;background:transparent;border:0;color:white;margin:auto;height:39px;width:44px}.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;vertical-align:middle}.panel{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:stretch}.screen{height:262px;background:#42484a;box-shadow:inset 0 0 8px #0006;border:2px solid #272b2e;position:relative;display:flex;flex-direction:column;min-width:0;color:#f4f6f7;font-family:'Arial Narrow',Arial,sans-serif}.title{height:31px;display:flex;align-items:center;justify-content:space-between;background:#6b7173;font-size:.75rem;padding:3px 5px;gap:3px}.title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.title .icon{width:17px;height:17px;flex-shrink:0}.content{flex:1;min-height:0;padding:8px 6px;display:flex;flex-direction:column;justify-content:center;gap:7px}.value{font-size:2.7rem;text-align:center;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.unit{font-size:.8rem}.sub{font-size:.82rem;color:#d7e1e7;text-align:center}.state{display:flex;justify-content:space-between;gap:3px;font-size:.7rem;padding:0 6px 5px;color:#e3edf0}.pages{font-size:.75rem;letter-spacing:2px;text-align:center;color:#c5ced1;min-height:20px}.row{display:flex;justify-content:space-between;gap:5px;padding:5px 4px;border:1px solid transparent;font-size:.76rem}.row.selected{border-color:#e5edef;background:#566063}.row b{font-size:1.08rem;white-space:nowrap}.editing{color:white;background:#577078}.menu-icon{text-align:center;font-size:3rem;line-height:1.3}.stripe{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;border:0;background:none;color:#e5e8eb;display:flex;justify-content:center;align-items:center}.stripe:active{cursor:grabbing}.stripe.vertical{background-image:radial-gradient(circle,#cbd1d3 2px,transparent 3px);background-size:9px 11px;background-repeat:repeat-y;background-position:center}.stripe.horizontal{height:38px;background-image:radial-gradient(circle,#e3e7e9 2px,transparent 3px);background-size:11px 9px;background-repeat:repeat-x;background-position:center}.stripe.horizontal::before,.stripe.horizontal::after{content:'';position:absolute;top:15px;width:17px;height:8px;border-radius:6px;background:#f0f5f7;box-shadow:0 0 5px #cbdbe1}.stripe.horizontal::before{left:23%}.stripe.horizontal::after{right:23%}.bottom{margin:0 36px;position:relative;min-height:40px}.edit-actions{display:flex;justify-content:space-between;align-items:center;gap:8px}.edit-actions button{min-width:44px;min-height:40px;border:0;background:transparent;color:white;font-size:1.5rem}.edit-actions button.cancel{color:#ff8f88}.edit-actions button.confirm{color:#baffc5}.rocker{display:flex;justify-content:space-between;align-items:center;border:2px solid #d3dada;border-radius:50px;width:106px;margin:22px auto 0;padding:1px 4px;box-shadow:0 0 2px #d2dfdb}.rocker button{display:grid;place-items:center;width:44px;height:40px;color:#eef3ef;background:none;border:0;border-radius:30px;padding:0}.rocker svg{width:28px;height:28px}.hint{font-size:.82rem;color:#b8c9d5;margin-top:8px}.controls{display:grid;gap:12px;margin-top:12px}.control{display:grid;grid-template-columns:1fr auto;gap:4px;font-size:.9rem}.control input{grid-column:1/-1;width:100%;accent-color:#71d3f6}.control output{color:#88d7fa}.actions{display:flex;flex-wrap:wrap;gap:7px}.action,select{color:#f1f8fa;background:#293f50;border:1px solid #476073;border-radius:6px;padding:8px 10px;min-height:42px}.action[aria-pressed=true]{border-color:#ffcc7c;color:#ffcc7c}.notice{border-left:3px solid #70d0f3;padding:4px 9px;font-size:.87rem;margin-top:14px;min-height:50px}.lesson{width:100%;margin-top:9px}.steps{font-size:.88rem;padding-left:23px;margin-bottom:0}.steps li+li{margin-top:8px}footer{font-size:.78rem;color:#9db4c5;margin-top:20px}.guide{display:grid;grid-template-columns:1fr;gap:5px;font-size:.85rem;margin-top:13px}.guide span{color:#b7ccdb}.pin{display:flex;gap:9px;justify-content:center;font-size:1.8rem}.pin .active{border-bottom:2px solid white}.error{font-size:.76rem;color:#ffada5;text-align:center}.meter{height:6px;background:#252c30;border-radius:2px;overflow:hidden}.meter i{display:block;height:100%;background:#acdbd0}.status-icon{display:block;margin:auto;width:35px;height:35px}[hidden]{display:none!important}@media(max-width:750px){.layout{grid-template-columns:1fr}.front{width:min(100%,330px)}}@media(prefers-reduced-motion:reduce){.blink{animation:none}}
+.botty-signature{text-align:center;margin:14px 0 8px;color:#edf1ee;font-family:Georgia,"Times New Roman",serif;font-size:32px;font-weight:700;font-style:italic;line-height:1.1;letter-spacing:.02em;text-shadow:0 1px 2px #000}.botty-signature+.rocker{margin-top:0}
+</style></head><body><main>
+<header><p class="brand">BOTTY · BANCO DE FORMACIÓN</p><h1>Swipe</h1><p>Controlador de velocidad fija · navegación mediante franjas de puntos</p></header>
+<div class="layout"><div class="stack"><section class="card"><div class="caption"><h2>Frontal del controlador</h2><span class="badge">DESLIZA PARA NAVEGAR</span></div>
+<div class="front" id="front">
+<div class="leds" aria-label="Indicadores"><span class="led red" id="alarmLed" role="img" aria-label="Aviso o alarma"></span><span class="led blue" id="serviceLed" role="img" aria-label="Servicio"></span><span class="led green" id="runLed" role="img" aria-label="Funcionamiento"></span><span class="led orange on" id="powerLed" role="img" aria-label="Tensión"></span></div>
+<button class="home" id="home" aria-label="Inicio"></button>
+<div class="panel"><div class="stripe vertical" id="left" role="slider" tabindex="0" aria-label="Franja izquierda. Deslizar para recorrer menús o seleccionar filas"></div>
+<div class="screen"><div class="title"><span id="title"></span><span id="accessIcon"></span></div><div class="content" id="content"></div><div class="state"><span id="mode"></span><span id="phase"></span></div><div class="pages" id="pages"></div></div>
+<div class="stripe vertical" id="right" role="slider" tabindex="0" aria-label="Franja derecha. Tocar para editar y deslizar para cambiar el valor"></div></div>
+<div class="bottom"><div class="stripe horizontal" id="horizontal" role="slider" tabindex="0" aria-label="Franja inferior. Deslizar a izquierda o derecha para cambiar de pantalla"></div><div class="edit-actions" id="editActions" hidden><button class="cancel" id="cancel" aria-label="Cancelar">✕</button><button id="next" aria-label="Siguiente cifra" hidden>→</button><button class="confirm" id="confirm" aria-label="Confirmar">✓</button></div></div>
+<div class="botty-signature">Botty</div>
+<div class="rocker"><button id="start" aria-label="Marcha"></button><button id="stop" aria-label="Paro"></button></div></div>
+<div class="guide"><div>Franja izquierda <span>↑ menús siguientes · ↓ menús anteriores</span></div><div>Franja inferior <span>← pantalla siguiente · → pantalla anterior</span></div><div>Franja derecha <span>toca para editar · ↑ aumenta · ↓ disminuye</span></div></div>
+<p class="hint">Arrastra con el ratón o desliza con el dedo sobre las franjas. En las páginas de valores, la izquierda selecciona filas. Inicio siempre vuelve a presión. Con el teclado, usa las flechas sobre cada franja.</p>
+</section><section class="card"><h2>Prácticas guiadas</h2><select class="lesson" id="lesson" aria-label="Elegir práctica"><option value="navigate">01 · Recorrer el controlador</option><option value="pressure">02 · Modificar las bandas de presión</option><option value="alarm">03 · Aviso, parada y rearme</option><option value="service">04 · Servicio y nivel de acceso</option><option value="remote">05 · Mando remoto</option></select><ol class="steps" id="steps"></ol></section></div>
+<section class="card"><h2>Banco de pruebas</h2><p class="hint">Mandos de simulación para preparar las prácticas.</p><div class="controls">
+<label class="control">Consumo de aire <output id="demandOut"></output><input id="demand" type="range" min="0" max="100" value="35"></label>
+<label class="control">Temperatura del elemento <output id="heatOut"></output><input id="heat" type="range" min="60" max="125" value="85"></label>
+<label class="control">Presión de red <output id="pressureOut"></output><input id="pressure" type="range" min="0" max="13" step=".1" value="6.5"></label>
+<div class="actions"><button class="action" id="auto">Presión automática</button><button class="action" id="overload" aria-pressed="false">Sobrecarga M1</button><button class="action" id="fan" aria-pressed="false">Sobrecarga M2</button><button class="action" id="sensor" aria-pressed="false">Fallo PT20</button><button class="action" id="phases" aria-pressed="false">Secuencia de fases</button></div>
+<div class="actions"><button class="action" id="due">Servicio vencido</button><button class="action" id="maintenance" disabled>Servicio realizado</button><button class="action" id="external" disabled aria-pressed="false">Orden externa</button></div>
+<button class="action" id="reset">Reiniciar práctica</button></div><p class="notice" id="notice" role="status"></p><p class="hint">Acceso Servicio de práctica con PIN 2801. Umbrales de temperatura según el manual, aviso a 110 °C y parada a 115 °C.</p></section></div>
+<footer>Simulador didáctico independiente. Referencia FIAC 9828093271, edición 10/2019, sección 14.3, páginas 16–35. Configuración de velocidad fija con secador integrado. Valores de presión, contadores y tiempos de evolución para formación. Acceso Servicio mediante PIN de práctica. Ethernet, CAN y ARAVF se presentan para consulta.</footer>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const svg=body=>'<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">'+body+'</svg>';
+const icons={
+ home:svg('<path fill="currentColor" stroke="none" d="m12 2 11 9h-4v11h-5v-7h-4v7H5V11H1z"/>'),
+ user:svg('<circle cx="12" cy="6" r="3"/><path d="M6 22v-6a6 6 0 0 1 12 0v6z"/>'),
+ alarm:svg('<path fill="currentColor" d="m12 2 11 20H1z"/><path stroke="#1a2225" d="M12 8v6m0 3v1"/>'),
+ service:svg('<path d="m13 11 7 7-2 2-7-7a6 6 0 0 1-8-7l4 4 3-3-4-4a6 6 0 0 1 7 8z"/>'),
+ run:svg('<g stroke-width="2.2"><path d="M7 3a9 9 0 0 1 13 11 7 7 0 0 1-12 4 6 6 0 0 1 4-10M4 19A9 9 0 0 1 8 4m13 13A9 9 0 0 1 5 19"/></g>'),
+ power:svg('<path fill="currentColor" stroke="none" d="m10 2 9-1-5 9 6-1-6 12-2 2 1-9-6 2z"/>'),
+ motor:svg('<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M2 12h3m14 0h3M9 5v14m6-14v14"/>'),
+ machine:svg('<circle cx="12" cy="12" r="8"/><path d="M3 10h18M12 2v3m0 14v3m-10-10h3m14 0h3"/>'),
+ data:svg('<rect x="3" y="4" width="18" height="16"/><path d="M6 15h3l2-7 3 9 2-5h3"/>'),
+ controller:svg('<rect x="3" y="3" width="18" height="13"/><path d="M8 21h8m-4-5v5"/>'),
+ info:svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v7m0-12v1"/>')
+};
+const defaults=()=>({menu:0,page:0,row:0,edit:null,pin:null,confirm:null,access:0,mode:0,band:0,low:[6.4,7],high:[7,7.6],
+ pressure:6.5,manual:false,heat:85,dew:5,demand:35,command:false,phase:'Parado',timer:0,
+ starts:182,runHours:1248,loadHours:851,service:4000,serviceDue:500,maintained:false,
+ overload:false,fan:false,sensor:false,phases:false,fault:null,external:false,minStop:20,units:0,timeout:5,clock:0});
+let s=defaults();
+const modes=['Local','Remoto','LAN'],levels=['Usuario','Avanzado','Servicio'];
+const menuNames=['Pantalla principal','Ajustes de la máquina','Equipo auxiliar','Datos','Servicio','Ajustes del controlador','Información'];
+const menuIcons=['home','machine','machine','data','service','controller','info'];
+const lessons={
+ navigate:['Desliza hacia arriba en la franja izquierda para recorrer los menús. En Inicio ves la presión.','Desde Inicio, desliza a la izquierda en la franja inferior para consultar temperatura, punto de rocío, horas y estado.','Pulsa la casa para volver a presión. Los puntos del display indican cuántas páginas hay y cuál está seleccionada.'],
+ pressure:['En Ajustes del controlador, desliza la franja inferior hasta Nivel de acceso. Toca la franja derecha, desliza hacia arriba hasta Avanzado y confirma abajo.','Vuelve a Inicio y sube por la franja izquierda hasta Ajustes de la máquina. Desliza la inferior a Punto de ajuste 1. La izquierda selecciona Descarga o Carga.','Toca la franja derecha y deslízala para cambiar el valor. Confirma con ✓ o cancela con ✕. Después arranca y observa carga, descarga y espera.'],
+ alarm:['Arranca. Sube la temperatura a 110 °C para ver el aviso y a 117 °C para provocar una parada.','Baja a 85 °C. En Inicio, recorre las páginas con la franja inferior hasta Estado. Toca la franja derecha.','Confirma debajo del símbolo de reinicio. El compresor queda parado. Puedes repetir con Sobrecarga M1 o Fallo PT20 y retirar la causa antes de rearmar.'],
+ service:['En Ajustes del controlador → Nivel de acceso, edita con la franja derecha y elige Servicio. Introduce 2801 con la franja derecha, usa → para pasar de cifra y confirma.','Simula Servicio vencido y Servicio realizado en el banco. Vuelve a Inicio y recorre los menús por la franja izquierda hasta Servicio.','Desliza la inferior a Próximo servicio. Toca la derecha y confirma las dos pantallas de reinicio. Es un ejercicio de formación con PIN de práctica.'],
+ remote:['Selecciona acceso Avanzado. En Ajustes de la máquina, recorre las pantallas hasta Modo de control.','Toca la franja derecha, desliza para seleccionar Remoto y confirma abajo. Marcha y Paro del frontal se deshabilitan.','Usa Orden externa en el banco. Para finalizar, retira la orden, cambia a Local y comprueba que puedes arrancar desde el frontal.']
+};
+const note=text=>{$('notice').textContent=text;};
+const pressureUnit=()=>s.units?'psi':'bar';
+const tempUnit=()=>s.units?'°F':'°C';
+const p=value=>(s.units?value*14.5038:value).toFixed(1);
+const t=value=>s.units?Math.round(value*1.8+32):value;
+const currentLow=()=>s.low[s.band],currentHigh=()=>s.high[s.band];
+const cause=()=>s.overload?'Sobrecarga M1':s.fan?'Sobrecarga M2':s.sensor?'Fallo sensor PT20':s.phases?'Secuencia de fases':s.heat>=115?'Temperatura TT11':null;
+function setPhase(value){if(s.phase!==value){s.phase=value;s.timer=0;if(value==='Arrancando')s.starts++;}}
+function checkFault(){const why=cause();if(why&&!s.fault){s.fault=why;s.command=false;setPhase('Parada por alarma');note('Parada por alarma · '+why+'. Retira la causa y rearma en Estado.');}}
+function command(on){if(on&&(s.fault||cause())){note('Resuelve y rearma la alarma antes de arrancar.');return;}s.command=on;if(!on)setPhase(s.fault?'Parada por alarma':'Parado');else setPhase(s.pressure>=currentHigh()?'En espera':'Arrancando');}
+function tick(dt){
+ s.clock+=dt;s.timer+=dt;
+ if(!s.manual)s.pressure=Math.max(0,s.pressure-s.demand*.004*dt);
+ checkFault();
+ if(s.command&&!s.fault){
+  if(s.phase==='Arrancando'&&s.timer>=2)setPhase('En carga');
+  if(s.phase==='En carga'){s.loadHours+=dt/3600;if(!s.manual)s.pressure+=.62*dt;if(s.pressure>=currentHigh())setPhase('En descarga');}
+  else if(s.phase==='En descarga'){if(s.pressure<=currentLow())setPhase('En carga');else if(s.timer>=6)setPhase('En espera');}
+  else if(s.phase==='En espera'&&s.pressure<=currentLow()&&s.timer>=s.minStop)setPhase('Arrancando');
+  if(['Arrancando','En carga','En descarga'].includes(s.phase)){s.runHours+=dt/3600;s.serviceDue=Math.max(0,s.serviceDue-dt/3600);}
+ }
+}
+const value=(name,get,options={})=>({name,get,...options});
+function menus(){return [0,1,...(s.access>=1?[2]:[]),3,...(s.access===2?[4]:[]),5,6];}
+function pages(){
+ const advanced=s.access>=1;
+ const main=[{name:'Presión de salida',measure:()=>p(s.pressure),unit:pressureUnit},{name:'Salida del elemento',measure:()=>t(s.heat),unit:tempUnit},{name:'Punto de rocío',measure:()=>t(s.dew),unit:tempUnit},{name:'Horas de funcionamiento',measure:()=>Math.floor(s.runHours),unit:()=> 'h'},
+ {name:'Punto de ajuste utilizado',rows:[value('Punto 1',()=>s.band===0?'■':'□'),value('Punto 2',()=>s.band===1?'■':'□')],band:true},
+ {name:'Descarga manual',manual:true},{name:'Estado',status:true}];
+ const band=i=>({name:'Punto de ajuste '+(i+1),rows:[
+ value('Descarga',()=>p(s.high[i]),{raw:()=>s.high[i],min:()=>s.low[i]+.1,max:12,step:.1,write:v=>{s.high[i]=v;},unit:pressureUnit}),
+ value('Carga',()=>p(s.low[i]),{raw:()=>s.low[i],min:1,max:()=>s.high[i]-.1,step:.1,write:v=>{s.low[i]=v;},unit:pressureUnit})]});
+ const config={0:main,1:[{name:menuNames[1],landing:true},...(advanced?[band(0),band(1),{name:'Ajuste',rows:[
+ value('Banda utilizada',()=>String(s.band+1),{raw:()=>s.band,min:0,max:1,step:1,write:v=>{s.band=v;},labels:['1','2']}),
+ value('Parada mínima',()=>s.minStop+' s',{raw:()=>s.minStop,min:10,max:30,step:1,write:v=>{s.minStop=v;}})]}]:[]),
+ {name:'Modo de control',rows:[value('Modo',()=>modes[s.mode],{raw:()=>s.mode,min:0,max:2,step:1,write:v=>{command(false);s.external=false;s.mode=v;},labels:modes,locked:!advanced})]},
+ {name:'Rearranque automático',text:'Desactivado. Ajuste reservado al servicio técnico.'}],
+ 2:[{name:menuNames[2],landing:true},{name:'Secador',measure:()=>t(s.dew),unit:tempUnit},{name:'SmartBox',text:'Recepción simulada 100 %'}],
+ 3:[{name:menuNames[3],landing:true},{name:'Contadores',rows:[value('Horas motor',()=>Math.floor(s.runHours)+' h'),value('Horas carga',()=>Math.floor(s.loadHours)+' h'),value('Arranques',()=>s.starts)]},
+ ...(advanced?[{name:'Entradas',rows:[value('PT20',()=>p(s.pressure)+' '+pressureUnit()),value('TT11',()=>t(s.heat)+' '+tempUnit()),value('Protecciones',()=>cause()?'Activas':'Correctas')]},
+ {name:'Salidas',rows:[value('Motor M1',()=>['Arrancando','En carga','En descarga'].includes(s.phase)?'Marcha':'Parado'),value('Válvula carga',()=>s.phase==='En carga'?'Activa':'Inactiva')]}]:[])],
+ 4:[{name:menuNames[4],landing:true},{name:'Próximo servicio',service:true},{name:'Prueba válvula',text:'Función de servicio. La prueba de válvula requiere el procedimiento del fabricante.'}],
+ 5:[{name:menuNames[5],landing:true},{name:'Nivel de acceso',rows:[value('Perfil',()=>levels[s.access],{raw:()=>s.access,min:0,max:2,step:1,write:v=>{s.access=v;},labels:levels,access:true})]},
+ {name:'Idioma',text:'Español · interfaz de formación'},
+ {name:'Unidades',rows:[value('Presión / temperatura',()=>s.units?'psi / °F':'bar / °C',{raw:()=>s.units,min:0,max:1,step:1,write:v=>{s.units=v;},labels:['bar / °C','psi / °F']})]},
+ {name:'Ajustes CAN',text:'Parámetros de red de consulta. Sin comunicación con equipos reales.'},
+ {name:'Ajustes Ethernet',text:'Ethernet desactivado. Sin conexión de red en esta práctica.'},
+ {name:'Tiempo espera display',rows:[value('Minutos',()=>s.timeout,{raw:()=>s.timeout,min:1,max:60,step:1,write:v=>{s.timeout=v;}})]}],
+ 6:[{name:menuNames[6],landing:true},{name:'Ayuda',text:'Navega con las franjas. Inicio vuelve a la presión.'},{name:'Información',text:'BOTTY · SWIPE · Serie DEMO · Reproducción didáctica'}]};
+ return config[s.menu];
+}
+function current(){const list=pages();s.page=Math.max(0,Math.min(list.length-1,s.page));const page=list[s.page];s.row=Math.max(0,Math.min((page.rows?.length??1)-1,s.row));return page;}
+function left(direction){
+ if(s.pin||s.confirm||s.edit)return;
+ const page=current();
+ if(page.band){s.band=Math.max(0,Math.min(1,s.band+direction));s.row=s.band;}
+ else if(page.rows){s.row=Math.max(0,Math.min(page.rows.length-1,s.row+direction));}
+ else if(page.manual){if(s.mode===0&&s.phase==='En carga'){setPhase('En descarga');note('Descarga manual.');}}
+ else {const list=menus();const i=list.indexOf(s.menu);s.menu=list[Math.max(0,Math.min(list.length-1,i-direction))];s.page=0;s.row=0;}
+ render();
+}
+function horizontal(direction){if(s.edit||s.pin||s.confirm)return;s.page=Math.max(0,Math.min(pages().length-1,s.page+direction));s.row=0;render();}
+function startEdit(){
+ if(s.edit||s.pin||s.confirm)return;
+ const page=current();
+ if(page.status&&s.fault){s.confirm='fault';}
+ else if(page.service){s.confirm='service';}
+ else {const row=page.rows?.[s.row];if(!row?.write)return;if(row.locked){note('Selecciona nivel Avanzado en Ajustes del controlador.');return;}s.edit={row,value:row.raw()};}
+ render();
+}
+function right(direction){if(s.pin){const i=s.pin.index;s.pin.digits[i]=(s.pin.digits[i]+direction+10)%10;s.pin.error='';}
+ else if(s.edit){const e=s.edit;const min=typeof e.row.min==='function'?e.row.min():e.row.min;const max=typeof e.row.max==='function'?e.row.max():e.row.max;e.value=Math.max(min,Math.min(max,Math.round((e.value+direction*e.row.step)*10)/10));}
+ else {startEdit();return;}render();}
+function cancel(){s.edit=null;s.pin=null;s.confirm=null;render();}
+function confirm(){
+ if(s.pin){if(s.pin.index<3){s.pin.index++;render();return;}if(s.pin.digits.join('')!=='2801'){s.pin.error='PIN de práctica incorrecto';render();return;}s.access=2;s.pin=null;note('Usuario Servicio de práctica.');}
+ else if(s.edit){const e=s.edit;if(e.row.access&&e.value===2){s.edit=null;s.pin={digits:[0,0,0,0],index:0,error:''};render();return;}e.row.write(e.value);s.edit=null;note('Ajuste confirmado.');}
+ else if(s.confirm==='fault'){if(cause()){note('La causa sigue activa. Resuélvela antes de rearmar.');return;}s.fault=null;s.confirm=null;setPhase('Parado');note('Alarma rearmada. Equipo parado.');}
+ else if(s.confirm==='service'){if(!s.maintained){note('Simula el servicio realizado en el banco.');return;}s.confirm='serviceSure';}
+ else if(s.confirm==='serviceSure'){s.serviceDue=s.service;s.maintained=false;s.confirm=null;note('Temporizador de servicio reiniciado.');}
+ render();
+}
+function render(){
+ const page=current();
+ $('title').textContent=s.pin?'Contraseña':page.name;
+ $('accessIcon').innerHTML=icons.user;$('accessIcon').title=levels[s.access];
+ let html='';
+ if(s.pin)html='<div class="sub">Servicio · PIN de práctica</div><div class="pin">'+s.pin.digits.map((d,i)=>'<span class="'+(i===s.pin.index?'active':'')+'">'+d+'</span>').join('')+'</div><div class="error">'+s.pin.error+'</div>';
+ else if(s.confirm)html='<div class="menu-icon">'+(s.confirm==='fault'?'⟲':s.confirm==='serviceSure'?'✓':icons.service)+'</div><div class="sub">'+(s.confirm==='fault'?'Rearmar alarma':s.confirm==='serviceSure'?'¿Está seguro?':'Reiniciar servicio')+'</div>';
+ else if(page.landing)html='<div class="menu-icon">'+icons[menuIcons[s.menu]]+'</div><div class="sub">'+menuNames[s.menu]+'</div>';
+ else if(page.rows)html=page.rows.map((row,i)=>{
+  const editing=s.edit&&s.edit.row.name===row.name&&i===s.row;
+  const val=editing?(row.labels?row.labels[s.edit.value]:row.unit?p(s.edit.value):s.edit.value):row.get();
+  return '<div class="row '+(s.row===i?'selected':'')+(editing?' editing':'')+'"><span>'+row.name+'</span><b>'+val+'</b></div>';
+ }).join('');
+ else if(page.measure)html='<div class="value">'+page.measure()+' <span class="unit">'+page.unit()+'</span></div>'+(s.menu===0&&s.page===0?'<div class="meter"><i style="width:'+Math.max(0,Math.min(100,s.pressure/13*100))+'%"></i></div>':'');
+ else if(page.status)html='<div class="menu-icon">'+(s.fault?icons.alarm:icons.motor)+'</div><div class="sub">'+(s.fault??s.phase)+'</div>'+(s.fault?'<div class="sub">Toca franja derecha para rearmar</div>':'');
+ else if(page.service)html='<div class="value">'+Math.ceil(s.serviceDue)+' <span class="unit">h</span></div><div class="sub">Restantes para servicio</div>';
+ else if(page.manual)html='<div class="menu-icon">'+icons.motor+'</div><div class="sub">'+s.phase+'</div><div class="sub">Toca la franja izquierda estando en carga</div>';
+ else html='<div class="sub">'+page.text+'</div>';
+ $('content').innerHTML=html;
+ $('mode').textContent=modes[s.mode];$('phase').textContent=s.phase;
+ $('pages').textContent=pages().map((_,i)=>i===s.page?'●':'○').join('');
+ const editing=!!(s.edit||s.pin||s.confirm);
+ $('horizontal').hidden=editing;$('editActions').hidden=!editing;$('next').hidden=!s.pin||s.pin.index===3;$('confirm').hidden=!!s.pin&&s.pin.index<3;
+ const alarm=!!s.fault||s.heat>=110;
+ $('alarmLed').classList.toggle('on',alarm);$('alarmLed').classList.toggle('blink',!!s.fault);
+ $('serviceLed').classList.toggle('on',s.serviceDue<=0);$('runLed').classList.toggle('on',s.command);
+ $('start').disabled=s.mode!==0||!!s.fault;$('stop').disabled=s.mode!==0;
+ $('demandOut').textContent=s.demand+' %';$('heatOut').textContent=s.heat+' °C';$('pressureOut').textContent=s.pressure.toFixed(1)+' bar · '+(s.manual?'manual':'auto');
+ if(!s.manual)$('pressure').value=s.pressure.toFixed(1);
+ $('auto').disabled=!s.manual;$('maintenance').disabled=s.serviceDue>0||s.maintained;$('external').disabled=s.mode===0;
+ for(const key of ['overload','fan','sensor','phases','external'])$(key).setAttribute('aria-pressed',String(s[key]));
+ for(const [id,axis] of [['left','vertical'],['right','vertical'],['horizontal','horizontal']]){
+  $(id).setAttribute('aria-orientation',axis);
+  const max=id==='horizontal'?pages().length-1:id==='left'?menus().length-1:s.edit?100:1;
+  $(id).setAttribute('aria-valuemin','0');$(id).setAttribute('aria-valuemax',String(max));
+  $(id).setAttribute('aria-valuenow',String(id==='horizontal'?s.page:id==='left'?menus().indexOf(s.menu):0));
+  $(id).setAttribute('aria-valuetext',id==='right'?(s.edit?String(s.edit.value):'Toca para editar'):page.name);
+ }
+}
+function bindStrip(id,axis,swipe,tap){
+ let point=null,active=false;
+ const node=$(id);
+ node.addEventListener('pointerdown',event=>{
+  if(event.button!==0||point)return;
+  point={id:event.pointerId,x:event.clientX,y:event.clientY};
+  node.setPointerCapture(event.pointerId);
+ });
+ node.addEventListener('pointerup',event=>{
+  if(!point||event.pointerId!==point.id)return;
+  const dx=event.clientX-point.x,dy=event.clientY-point.y;
+  point=null;
+  const delta=axis==='x'?dx:dy;
+  const cross=axis==='x'?dy:dx;
+  if(Math.abs(delta)>=20&&Math.abs(delta)>Math.abs(cross)*1.2){swipe(delta<0?1:-1);active=true;}
+  else if(Math.abs(dx)<10&&Math.abs(dy)<10){tap?.();active=true;}
+ });
+ const release=()=>{point=null;};
+ node.addEventListener('pointercancel',release);node.addEventListener('lostpointercapture',release);
+ node.addEventListener('click',event=>{if(active){active=false;return;}if(event.detail===0)tap?.();});
+ node.addEventListener('keydown',event=>{
+  const positive=axis==='x'?'ArrowLeft':'ArrowUp',negative=axis==='x'?'ArrowRight':'ArrowDown';
+  if(event.key===positive||event.key===negative){event.preventDefault();swipe(event.key===positive?1:-1);}
+  else if(event.key==='Enter'||event.key===' '){event.preventDefault();tap?.();}
+ });
+}
+bindStrip('left','y',direction=>left(-direction),()=>{if(current().manual)left(0);});
+bindStrip('horizontal','x',horizontal);
+bindStrip('right','y',right,startEdit);
+$('home').innerHTML=icons.home;$('home').onclick=()=>{s.menu=0;s.page=0;s.row=0;cancel();};
+$('start').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 6v12" stroke="#242a2a" stroke-width="2.4"/></svg>';
+$('stop').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+$('start').onclick=()=>{if(!s.mode)command(true);render();};
+$('stop').onclick=()=>{if(!s.mode)command(false);render();};
+$('cancel').onclick=cancel;$('confirm').onclick=confirm;$('next').onclick=()=>{if(s.pin&&s.pin.index<3)s.pin.index++;render();};
+for(const key of ['overload','fan','sensor','phases'])$(key).onclick=()=>{s[key]=!s[key];checkFault();render();};
+$('demand').oninput=e=>{s.demand=Number(e.target.value);render();};
+$('heat').oninput=e=>{s.heat=Number(e.target.value);checkFault();render();};
+$('pressure').oninput=e=>{s.manual=true;s.pressure=Number(e.target.value);render();};
+$('auto').onclick=()=>{s.manual=false;render();};
+$('due').onclick=()=>{s.serviceDue=0;s.maintained=false;note('Servicio vencido. Consulta el nivel Servicio.');render();};
+$('maintenance').onclick=()=>{s.maintained=true;note('Servicio simulado realizado. Rearma el temporizador desde Servicio.');render();};
+$('external').onclick=()=>{if(!s.mode)return;s.external=!s.external;command(s.external);render();};
+$('reset').onclick=()=>{s=defaults();$('heat').value=s.heat;$('demand').value=s.demand;note('Práctica reiniciada.');render();};
+$('lesson').onchange=()=>{$('steps').replaceChildren(...lessons[$('lesson').value].map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));};
+for(const [id,key] of [['alarmLed','alarm'],['serviceLed','service'],['runLed','run'],['powerLed','power']])$(id).innerHTML=icons[key];
+$('lesson').onchange();render();note('Listo. Navega deslizando en las franjas o pulsa Marcha.');
+let last=performance.now();
+setInterval(()=>{const now=performance.now();tick(Math.min(1,(now-last)/1000));last=now;render();},250);
+</script></main></body></html>
