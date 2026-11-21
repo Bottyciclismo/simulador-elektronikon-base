@@ -3,6 +3,10 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#111923;color:#eaf2f8;font:16px/1.5 system-ui,sans-serif}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #75d7ff;outline-offset:3px}button:disabled{opacity:.35;cursor:default}h1,h2,p{margin:0}h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.15}h2{font-size:1.1rem}main{max-width:1170px;margin:auto;padding:clamp(14px,4vw,40px)}.brand{letter-spacing:.15em;color:#7bd6f8;font-weight:750;font-size:.75rem}header>p:last-child{color:#b8c9d5;margin-top:8px}.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:20px;margin-top:24px;align-items:start}.stack{display:grid;gap:16px}.card{padding:17px;border:1px solid #344451;background:#1b2733;border-radius:14px}.caption{display:flex;justify-content:space-between;gap:9px;align-items:center}.badge{font-size:.7rem;color:#8ed6f4;border:1px solid #426074;border-radius:18px;padding:3px 10px}.front{width:min(100%,335px);margin:18px auto;background:linear-gradient(130deg,#212325,#050607 40%,#17191b);border:2px solid #363a3e;border-radius:24px 24px 34px 34px;padding:28px 12px 29px;box-shadow:inset 2px 2px 8px #62666b66,0 12px 30px #0008}.leds{display:flex;justify-content:center;gap:22px;align-items:center;height:27px;margin-bottom:12px}.led{color:#343b40}.led svg{width:19px;height:19px;display:block}.led.on{filter:drop-shadow(0 0 3px currentColor)}.red.on{color:#ff5550}.blue.on{color:#49baff}.green.on{color:#68f49e}.orange.on{color:#ff992d}.blink{animation:blink 1s step-end infinite}@keyframes blink{50%{opacity:.35}}.home{display:block;background:transparent;border:0;color:white;margin:auto;height:39px;width:44px}.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;vertical-align:middle}.panel{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:stretch}.screen{height:262px;background:#42484a;box-shadow:inset 0 0 8px #0006;border:2px solid #272b2e;position:relative;display:flex;flex-direction:column;min-width:0;color:#f4f6f7;font-family:'Arial Narrow',Arial,sans-serif}.title{height:31px;display:flex;align-items:center;justify-content:space-between;background:#6b7173;font-size:.75rem;padding:3px 5px;gap:3px}.title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.title .icon{width:17px;height:17px;flex-shrink:0}.content{flex:1;min-height:0;padding:8px 6px;display:flex;flex-direction:column;justify-content:center;gap:7px}.value{font-size:2.7rem;text-align:center;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.unit{font-size:.8rem}.sub{font-size:.82rem;color:#d7e1e7;text-align:center}.state{display:flex;justify-content:space-between;gap:3px;font-size:.7rem;padding:0 6px 5px;color:#e3edf0}.pages{font-size:.75rem;letter-spacing:2px;text-align:center;color:#c5ced1;min-height:20px}.row{display:flex;justify-content:space-between;gap:5px;padding:5px 4px;border:1px solid transparent;font-size:.76rem}.row.selected{border-color:#e5edef;background:#566063}.row b{font-size:1.08rem;white-space:nowrap}.editing{color:white;background:#577078}.menu-icon{text-align:center;font-size:3rem;line-height:1.3}.stripe{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;border:0;background:none;color:#e5e8eb;display:flex;justify-content:center;align-items:center}.stripe:active{cursor:grabbing}.stripe.vertical{background-image:radial-gradient(circle,#cbd1d3 2px,transparent 3px);background-size:9px 11px;background-repeat:repeat-y;background-position:center}.stripe.horizontal{height:38px;background-image:radial-gradient(circle,#e3e7e9 2px,transparent 3px);background-size:11px 9px;background-repeat:repeat-x;background-position:center}.stripe.horizontal::before,.stripe.horizontal::after{content:'';position:absolute;top:15px;width:17px;height:8px;border-radius:6px;background:#f0f5f7;box-shadow:0 0 5px #cbdbe1}.stripe.horizontal::before{left:23%}.stripe.horizontal::after{right:23%}.bottom{margin:0 36px;position:relative;min-height:40px}.edit-actions{display:flex;justify-content:space-between;align-items:center;gap:8px}.edit-actions button{min-width:44px;min-height:40px;border:0;background:transparent;color:white;font-size:1.5rem}.edit-actions button.cancel{color:#ff8f88}.edit-actions button.confirm{color:#baffc5}.rocker{display:flex;justify-content:space-between;align-items:center;border:2px solid #d3dada;border-radius:50px;width:106px;margin:22px auto 0;padding:1px 4px;box-shadow:0 0 2px #d2dfdb}.rocker button{display:grid;place-items:center;width:44px;height:40px;color:#eef3ef;background:none;border:0;border-radius:30px;padding:0}.rocker svg{width:28px;height:28px}.hint{font-size:.82rem;color:#b8c9d5;margin-top:8px}.controls{display:grid;gap:12px;margin-top:12px}.control{display:grid;grid-template-columns:1fr auto;gap:4px;font-size:.9rem}.control input{grid-column:1/-1;width:100%;accent-color:#71d3f6}.control output{color:#88d7fa}.actions{display:flex;flex-wrap:wrap;gap:7px}.action,select{color:#f1f8fa;background:#293f50;border:1px solid #476073;border-radius:6px;padding:8px 10px;min-height:42px}.action[aria-pressed=true]{border-color:#ffcc7c;color:#ffcc7c}.notice{border-left:3px solid #70d0f3;padding:4px 9px;font-size:.87rem;margin-top:14px;min-height:50px}.lesson{width:100%;margin-top:9px}.steps{font-size:.88rem;padding-left:23px;margin-bottom:0}.steps li+li{margin-top:8px}footer{font-size:.78rem;color:#9db4c5;margin-top:20px}.guide{display:grid;grid-template-columns:1fr;gap:5px;font-size:.85rem;margin-top:13px}.guide span{color:#b7ccdb}.pin{display:flex;gap:9px;justify-content:center;font-size:1.8rem}.pin .active{border-bottom:2px solid white}.error{font-size:.76rem;color:#ffada5;text-align:center}.meter{height:6px;background:#252c30;border-radius:2px;overflow:hidden}.meter i{display:block;height:100%;background:#acdbd0}.status-icon{display:block;margin:auto;width:35px;height:35px}[hidden]{display:none!important}@media(max-width:750px){.layout{grid-template-columns:1fr}.front{width:min(100%,330px)}}@media(prefers-reduced-motion:reduce){.blink{animation:none}}
 .botty-signature{text-align:center;margin:14px 0 8px;color:#edf1ee;font-family:Georgia,"Times New Roman",serif;font-size:32px;font-weight:700;font-style:italic;line-height:1.1;letter-spacing:.02em;text-shadow:0 1px 2px #000}.botty-signature+.rocker{margin-top:0}
+
+.front{width:min(100%,430px);padding:32px 18px 30px}.panel{grid-template-columns:40px minmax(0,1fr) 40px}.screen{height:auto;aspect-ratio:1;min-height:0}.title{min-height:36px;height:auto;font-size:.9rem;align-items:flex-start;padding:5px 6px}.title>span:first-child{white-space:normal;overflow:visible;line-height:1.2}.title .icon{width:22px;height:22px}.title #accessIcon{flex-shrink:0}.content{position:relative;padding:12px 12px 8px 18px;min-height:0}.menu-icon .detailed-icon{width:108px;height:108px;stroke-width:1.8;overflow:visible}.menu-icon{line-height:1}.value{font-size:clamp(2.7rem,7vw,3.8rem)}.sub{font-size:.86rem}.row{font-size:.83rem}.row b{font-size:1.3rem}.pages{font-size:.9rem;min-height:23px;letter-spacing:3px}.state{min-height:42px;align-items:center;padding:1px 9px 6px;font-size:.73rem;gap:8px}.mode-symbol{margin-left:auto;display:grid;justify-items:end;gap:2px;font-size:.65rem}.mode-symbol .icon{width:25px;height:25px}.operation-icon{display:inline-grid;place-items:center;flex-shrink:0}.operation-icon .icon{width:39px;height:39px;stroke-width:2}.state #phase{display:flex;align-items:center;gap:6px;flex:1;min-width:0}.state-label{margin-left:auto;text-align:right;max-width:118px;line-height:1.1}.screen.pressure-page .value{padding-right:9px}.sensor-scale{position:absolute;top:13px;bottom:10px;left:5px;width:6px;background:#292f32;display:flex;align-items:flex-end}.sensor-scale i{display:block;width:100%;background:#b7c7cb}.sensor-scale .limit{position:absolute;left:-2px;width:10px;height:1px;background:#e2eceb}.bottom{margin-inline:40px}.stripe.vertical{background-size:9px 12px}.stripe.horizontal{height:44px}.stripe.horizontal::before,.stripe.horizontal::after{top:18px}.leds{gap:25px}.led svg{width:23px;height:23px}
+@media(max-width:400px){.front{padding:26px 8px;width:100%}.panel{grid-template-columns:32px minmax(0,1fr) 32px}.screen{min-height:0}.menu-icon .detailed-icon{width:74px;height:74px}.title{font-size:.77rem}.content{padding:9px 5px 5px 13px;min-height:0}.row{font-size:.74rem}.row b{font-size:1.12rem}.sub{font-size:.76rem}.bottom{margin-inline:32px}.state-label{font-size:.66rem}.operation-icon .icon{width:32px;height:32px}}
+
 </style></head><body><main>
 <header><p class="brand">BOTTY · BANCO DE FORMACIÓN</p><h1>Swipe+</h1><p>Controlador de velocidad variable VSD · navegación mediante franjas de puntos</p></header>
 <div class="layout"><div class="stack"><section class="card"><div class="caption"><h2>Frontal del controlador</h2><span class="badge">DESLIZA PARA NAVEGAR</span></div>
@@ -10,7 +14,7 @@
 <div class="leds" aria-label="Indicadores"><span class="led red" id="alarmLed" role="img" aria-label="Aviso o alarma"></span><span class="led blue" id="serviceLed" role="img" aria-label="Servicio"></span><span class="led green" id="runLed" role="img" aria-label="Funcionamiento"></span><span class="led orange on" id="powerLed" role="img" aria-label="Tensión"></span></div>
 <button class="home" id="home" aria-label="Inicio"></button>
 <div class="panel"><div class="stripe vertical" id="left" role="slider" tabindex="0" aria-label="Franja izquierda. Deslizar para recorrer menús o seleccionar filas"></div>
-<div class="screen"><div class="title"><span id="title"></span><span id="accessIcon"></span></div><div class="content" id="content"></div><div class="state"><span id="mode"></span><span id="phase"></span></div><div class="pages" id="pages"></div></div>
+<div class="screen"><div class="title"><span id="title"></span><span id="accessIcon"></span></div><div class="content" id="content"></div><div class="state"><span id="phase"></span><span id="mode"></span></div><div class="pages" id="pages"></div></div>
 <div class="stripe vertical" id="right" role="slider" tabindex="0" aria-label="Franja derecha. Tocar para editar y deslizar para cambiar el valor"></div></div>
 <div class="bottom"><div class="stripe horizontal" id="horizontal" role="slider" tabindex="0" aria-label="Franja inferior. Deslizar a izquierda o derecha para cambiar de pantalla"></div><div class="edit-actions" id="editActions" hidden><button class="cancel" id="cancel" aria-label="Cancelar">✕</button><button id="next" aria-label="Siguiente cifra" hidden>→</button><button class="confirm" id="confirm" aria-label="Confirmar">✓</button></div></div>
 <div class="botty-signature">Botty</div>
@@ -43,14 +47,50 @@ const icons={
  controller:svg('<rect x="3" y="3" width="18" height="13"/><path d="M8 21h8m-4-5v5"/>'),
  info:svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v7m0-12v1"/>')
 };
+
+const gear=(x,y,r)=>'<g transform="translate('+x+' '+y+')"><circle r="'+r+'" fill="none"/><circle r="'+(r*.55)+'" fill="none"/>'+Array.from({length:12},(_,i)=>'<path transform="rotate('+(i*30)+')" d="M0 '+(-r-2)+'v4"/>').join('')+'</g>';
+const detailedSvg=body=>'<svg class="icon detailed-icon" viewBox="0 0 48 48" aria-hidden="true">'+body+'</svg>';
+const clockMark='<circle cx="39" cy="39" r="6" fill="#42484a"/><path d="M39 35v4l3 1"/>';
+const machineBody='<path d="M16 15v-2a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v22a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4v-2"/><path d="M27 2v6m-3-3 3 3 3-3M27 46v-6m-3 3 3-3 3 3"/>';
+const loadFlow='<path d="M7 24h14m-5-4 5 4-5 4"/>';
+const unloadFlow='<path d="M6 24h8M9 22V9m-4 5 4-5 4 5M9 26v14m-4-5 4 5 4-5"/>';
+const handMark='<path d="M29 43v-11c0-2 3-2 3 0v5-11c0-2 3-2 3 0v10-7c0-2 3-2 3 0v8-5c0-2 3-2 3 0v11l-4 4h-5l-7-9c-1-2 1-3 3-1l2 2" fill="#42484a"/>';
+Object.assign(icons,{
+ machine:detailedSvg('<circle cx="31" cy="17" r="13"/><path d="m21 7 22 4M18 17h26M21 27l22-4"/>'+gear(13,28,6)+gear(22,38,7)),
+ aux:detailedSvg('<path d="M15 6h28v27M10 12h28v27"/><rect x="4" y="18" width="29" height="26" rx="1"/><path d="M14 25h14M14 31h14M14 37h14"/><g fill="currentColor" stroke="none"><circle cx="9" cy="25" r="1.3"/><circle cx="9" cy="31" r="1.3"/><circle cx="9" cy="37" r="1.3"/></g>'),
+ data:detailedSvg('<rect x="4" y="7" width="40" height="32" rx="1"/><path d="M12 12v20h26M8 16l4-4 4 4m17 12 5 4-5 4M16 23h4l2-6 3 12 3-9 2 4h5"/>'),
+ service:detailedSvg('<path d="M17 21v-5a8 8 0 0 1-2-12v7h9V4a8 8 0 0 1-2 12v5M24 22h4l9 11v9l-8 4h-8"/><path d="M23 25v16c0 4-5 4-5 0V28m0-6h-5c-5 0-5 6 0 6h8m-9 0c-5 0-5 6 0 6h9m-8 0c-5 0-5 6 0 6h8m-7 0c-4 0-4 5 0 5h4"/>'),
+ controller:detailedSvg('<rect x="13" y="4" width="31" height="23"/><rect x="17" y="8" width="23" height="15"/><path d="M30 12h7m-7 4h7m-7 4h7"/>'+gear(10,27,5)+gear(21,37,8)),
+ info:detailedSvg('<rect x="5" y="8" width="38" height="31" rx="1"/><path stroke-width="3" d="M24 22v10m-3 0h6"/><circle cx="24" cy="16" r="2" fill="currentColor" stroke="none"/>'),
+ local:detailedSvg('<path d="M9 15H5v28h28V27M43 5 20 28m0-8v8h8"/>'),
+ remote:detailedSvg('<path d="M10 9H5v34h33V29M20 28 43 5m-10 0h10v10"/>'),
+ lan:detailedSvg('<rect x="18" y="3" width="12" height="9"/><path d="M24 12v11M9 32v-9h30v9"/><rect x="3" y="32" width="12" height="10"/><rect x="18" y="32" width="12" height="10"/><rect x="33" y="32" width="12" height="10"/>'),
+ stopped:detailedSvg(machineBody),
+ waiting:detailedSvg(machineBody+clockMark),
+ loaded:detailedSvg(machineBody+loadFlow),
+ unloaded:detailedSvg(machineBody+unloadFlow),
+ loadedWait:detailedSvg(machineBody+loadFlow+clockMark),
+ unloadedWait:detailedSvg(machineBody+unloadFlow+clockMark),
+ manualUnload:detailedSvg(machineBody+unloadFlow+handMark)
+});
+function stateSymbol(){
+ if(s.phase==='En carga')return 'loaded';
+ if(s.phase==='Arrancando')return 'loadedWait';
+ if(s.phase==='Parando')return 'unloadedWait';
+ if(s.phase==='En descarga')return s.manualUnload?'manualUnload':'unloaded';
+ if(s.phase==='En espera')return 'waiting';
+ return 'stopped';
+}
+function operationIcon(){return '<span class="operation-icon" role="img" aria-label="'+s.phase+'">'+icons[stateSymbol()]+'</span>';}
+
 const defaults=()=>({menu:0,page:0,row:0,edit:null,pin:null,confirm:null,access:0,mode:0,band:0,low:[7,8],high:[7.6,8.6],
- speed:0,pressure:6.5,manual:false,heat:85,dew:5,demand:35,command:false,phase:'Parado',timer:0,
+ speed:0,pressure:6.5,manualUnload:false,manual:false,heat:85,dew:5,demand:35,command:false,phase:'Parado',timer:0,
  starts:182,runHours:1248,loadHours:851,service:4000,serviceDue:500,maintained:false,
  overload:false,fan:false,sensor:false,drive:false,fault:null,external:false,minStop:20,units:0,timeout:5,clock:0});
 let s=defaults();
 const modes=['Local','Remoto','LAN'],levels=['Usuario','Avanzado','Servicio'];
 const menuNames=['Pantalla principal','Ajustes de la máquina','Equipo auxiliar','Datos','Servicio','Ajustes del controlador','Información'];
-const menuIcons=['home','machine','machine','data','service','controller','info'];
+const menuIcons=['home','machine','aux','data','service','controller','info'];
 const lessons={
  vsd:['Selecciona acceso Avanzado. Arranca con consumo al 35 % y consulta Datos → Velocidad motor.','Sube el consumo al 75 %. Observa el aumento de revoluciones y la recuperación de presión. Baja al 35 % y compara la velocidad estabilizada.','Pon el consumo a 0 %. El motor pasa a descarga al llegar a su velocidad mínima. Avanza la simulación hasta completar 180 s de descarga y comprobar la espera. Al subir el consumo volverá a arrancar respetando la parada mínima.'],
  navigate:['Desliza hacia arriba en la franja izquierda para recorrer los menús. En Inicio ves la presión.','Desde Inicio, desliza a la izquierda en la franja inferior para consultar temperatura, punto de rocío, horas y estado.','Pulsa la casa para volver a presión. Los puntos del display indican cuántas páginas hay y cuál está seleccionada.'],
@@ -66,7 +106,7 @@ const p=value=>(s.units?value*14.5038:value).toFixed(1);
 const t=value=>s.units?Math.round(value*1.8+32):value;
 const currentLow=()=>s.low[s.band],currentHigh=()=>s.high[s.band];
 const cause=()=>s.overload?'Convertidor · Al 13 · Sobrecorriente':s.fan?'Sobrecarga M2':s.sensor?'Fallo sensor PT20':s.drive?'Convertidor · Al 9 · Sobrecarga':s.heat>=115?'Temperatura TT11':null;
-function setPhase(value){if(s.phase!==value){s.phase=value;s.timer=0;if(value==='Arrancando')s.starts++;}}
+function setPhase(value){if(s.phase!==value){s.phase=value;s.timer=0;if(value!=='En descarga')s.manualUnload=false;if(value==='Arrancando')s.starts++;}}
 function checkFault(){const why=cause();if(why&&!s.fault){s.fault=why;s.command=false;s.speed=0;setPhase('Parada por alarma');note('Parada por alarma · '+why+'. Retira la causa y rearma en Estado.');}}
 function command(on){if(on&&(s.fault||cause())){note('Resuelve y rearma la alarma antes de arrancar.');return;}if(s.command===on)return;s.command=on;if(!on){if(!s.fault&&['Arrancando','En carga','En descarga','Parando'].includes(s.phase))setPhase('Parando');else setPhase(s.fault?'Parada por alarma':'Parado');}else setPhase(s.pressure>currentLow()+.2?'En espera':'Arrancando');}
 function tick(dt){
@@ -132,7 +172,7 @@ function left(direction){
  const page=current();
  if(page.band){s.band=Math.max(0,Math.min(1,s.band+direction));s.row=s.band;}
  else if(page.rows){s.row=Math.max(0,Math.min(page.rows.length-1,s.row+direction));}
- else if(page.manual){if(s.mode===0&&s.phase==='En carga'){setPhase('En descarga');note('Descarga manual.');}}
+ else if(page.manual){if(s.mode===0&&s.phase==='En carga'){setPhase('En descarga');s.manualUnload=true;note('Descarga manual.');}}
  else {const list=menus();const i=list.indexOf(s.menu);s.menu=list[Math.max(0,Math.min(list.length-1,i-direction))];s.page=0;s.row=0;}
  render();
 }
@@ -159,8 +199,8 @@ function confirm(){
 }
 function render(){
  const page=current();
- $('title').textContent=s.pin?'Contraseña':page.name;
- $('accessIcon').innerHTML=icons.user;$('accessIcon').title=levels[s.access];
+ $('title').textContent=s.pin?'Contraseña':s.menu===0&&s.page===0?s.phase:page.name;
+ $('accessIcon').innerHTML=icons.user.replace('</svg>',s.access?'<circle cx="19" cy="18" r="4" fill="#42484a"/><path d="M19 15v6m-3-3h6"/>'+'</svg>':'</svg>');$('accessIcon').title=levels[s.access];
  let html='';
  if(s.pin)html='<div class="sub">Servicio · PIN de práctica</div><div class="pin">'+s.pin.digits.map((d,i)=>'<span class="'+(i===s.pin.index?'active':'')+'">'+d+'</span>').join('')+'</div><div class="error">'+s.pin.error+'</div>';
  else if(s.confirm)html='<div class="menu-icon">'+(s.confirm==='fault'?'⟲':s.confirm==='serviceSure'?'✓':icons.service)+'</div><div class="sub">'+(s.confirm==='fault'?'Rearmar alarma':s.confirm==='serviceSure'?'¿Está seguro?':'Reiniciar servicio')+'</div>';
@@ -170,13 +210,13 @@ function render(){
   const val=editing?(row.labels?row.labels[s.edit.value]:row.unit?p(s.edit.value):s.edit.value):row.get();
   return '<div class="row '+(s.row===i?'selected':'')+(editing?' editing':'')+'"><span>'+row.name+'</span><b>'+val+'</b></div>';
  }).join('');
- else if(page.measure)html='<div class="value">'+page.measure()+' <span class="unit">'+page.unit()+'</span></div>'+(s.menu===0&&s.page===0?'<div class="meter"><i style="width:'+Math.max(0,Math.min(100,s.pressure/13*100))+'%"></i></div>':'');
- else if(page.status)html='<div class="menu-icon">'+(s.fault?icons.alarm:icons.motor)+'</div><div class="sub">'+(s.fault??s.phase)+'</div>'+(s.fault?'<div class="sub">Toca franja derecha para rearmar</div>':'');
+ else if(page.measure)html='<div class="value">'+page.measure()+' <span class="unit">'+page.unit()+'</span></div>'+(s.menu===0&&s.page===0?'<div class="sensor-scale" aria-hidden="true"><i style="height:'+Math.max(0,Math.min(100,s.pressure/13*100))+'%"></i><b class="limit" style="bottom:'+s.low[s.band]/13*100+'%"></b><b class="limit" style="bottom:'+s.high[s.band]/13*100+'%"></b></div>':'');
+ else if(page.status)html='<div class="menu-icon">'+(s.fault?icons.alarm:icons[stateSymbol()])+'</div><div class="sub">'+(s.fault??s.phase)+'</div>'+(s.fault?'<div class="sub">Toca franja derecha para rearmar</div>':'');
  else if(page.service)html='<div class="value">'+Math.ceil(s.serviceDue)+' <span class="unit">h</span></div><div class="sub">Restantes para servicio</div>';
- else if(page.manual)html='<div class="menu-icon">'+icons.motor+'</div><div class="sub">'+s.phase+'</div><div class="sub">Toca la franja izquierda estando en carga</div>';
+ else if(page.manual)html='<div class="menu-icon">'+icons[stateSymbol()]+'</div><div class="sub">'+s.phase+'</div><div class="sub">Toca la franja izquierda estando en carga</div>';
  else html='<div class="sub">'+page.text+'</div>';
  $('content').innerHTML=html;
- $('mode').textContent=modes[s.mode];$('phase').textContent=s.phase;
+ $('mode').innerHTML='<span class="mode-symbol" role="img" aria-label="Control '+modes[s.mode]+'">'+icons[['local','remote','lan'][s.mode]]+'<span>'+modes[s.mode]+'</span></span>';$('phase').innerHTML=operationIcon()+'<span class="state-label">'+s.phase+'</span>';
  $('pages').textContent=pages().map((_,i)=>i===s.page?'●':'○').join('');
  const editing=!!(s.edit||s.pin||s.confirm);
  $('horizontal').hidden=editing;$('editActions').hidden=!editing;$('next').hidden=!s.pin||s.pin.index===3;$('confirm').hidden=!!s.pin&&s.pin.index<3;
